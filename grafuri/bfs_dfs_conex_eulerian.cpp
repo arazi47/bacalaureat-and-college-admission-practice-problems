@@ -5,7 +5,7 @@ using namespace std;
 
 int noduri, muchii;
 int a[10][10];
-int P[100]; // varfurile vizitate
+int P[100];
 int G[100];
 
 void citire()
@@ -55,7 +55,7 @@ void DFS(int s)
 
 bool conex()
 {
-    BFS(1);
+    DFS(1);
 
     for(int i = 1; i <= noduri; i++)
         if(P[i] == 0)
@@ -80,7 +80,7 @@ bool euler()
         return false;
 
     for(int i = 1; i <= noduri; i++)
-        if(G[i] % 2 == 1)
+        if(G[i] % 2 != 0)
             return false;
 
     return true;
@@ -89,6 +89,9 @@ bool euler()
 int main()
 {
     citire();
+
+    for (int i = 1; i <= noduri; i++)
+        G[i] = grad(i);
 
     if (euler())
         cout << "E eulerian";
