@@ -4,7 +4,7 @@
 using namespace std;
 
 int a[10][10]; // matricea de adiacenta
-int n[100][100]; // matricea de incidenta
+int n[100][100]; // matricea drumurilor
 int noduri, muchii;
 
 void read()
