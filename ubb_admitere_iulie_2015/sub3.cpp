@@ -11,8 +11,8 @@ void citire()
 {
     cin >> n >> m;
 
-    for (int i = 1; i <= n; ++i)
-        for (int j = 1; j <= m; ++j)
+    for (int j = 1; j <= m; ++j)
+        for (int i = 1; i <= n; ++i)
             cin >> A[i][j];
 }
 
@@ -22,7 +22,7 @@ void ConstruiesteX()
     for (int j = 1; j <= m; ++j)
         for (int i = 1; i <= n; ++i)
         {
-            ++indexX; // incepe de la 1
+            ++indexX;
             X[indexX] = A[i][j];
         }
 }
@@ -43,7 +43,7 @@ bool magic(int x)
     int nrc = 0;
 
     if (!prim(x))
-        return 0;
+        return false;
 
     while (x2)
     {
@@ -54,15 +54,15 @@ bool magic(int x)
     for (int i = 0; i < nrc - 1; ++i)
     {
         if (!prim(x % mult))
-            return 0;
+            return false;
 
         mult *= 10;
     }
 
     if (!prim(x / mult)) // prima cifra
-        return 0;
+        return false;
 
-    return 1;
+    return true;
 }
 
 void AfisareSecventa(int index1, int index2)
