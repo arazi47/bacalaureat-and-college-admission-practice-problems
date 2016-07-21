@@ -29,6 +29,26 @@ int subI_B(int n)
     return _max;
 }
 
+int subI_C_1(int n, int X[], int v)
+{
+    for (int i = 1; i <= n; ++i)
+        if (X[i] == v)
+            return i;
+
+    return -1;
+}
+
+int subI_C_2(int n, int X[], int v)
+{
+    if (n == 0)
+        return -1;
+
+    if (X[n] == v)
+        return n;
+
+    return subI_C_2(n - 1, X, v);
+}
+
 int main()
 {
     return 0;
