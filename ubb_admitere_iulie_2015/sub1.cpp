@@ -29,6 +29,7 @@ int subI_B(int n)
     return _max;
 }
 
+// varianta nerecursiva
 int subI_C_1(int n, int X[], int v)
 {
     for (int i = 1; i <= n; ++i)
@@ -38,6 +39,7 @@ int subI_C_1(int n, int X[], int v)
     return -1;
 }
 
+// varianta recursiva
 int subI_C_2(int n, int X[], int v)
 {
     if (n == 0)
