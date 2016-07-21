@@ -88,7 +88,7 @@ void DetSecvMax(int index1)
 void DeterminaSecventa()
 {
     for (int i = 1; i < indexX; ++i) // nu <= pentru ca verificam si i + 1
-        if (magic(X[i] + X[i + 1]))//{
+        if (magic(X[i] + X[i + 1]))
             DetSecvMax(i);
 
 }
