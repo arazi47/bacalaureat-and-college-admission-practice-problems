@@ -4,6 +4,57 @@
 
 using namespace std;
 
+int subI_A(int m, int n, int A[101][101])
+{
+    int cnt = 0, ml, mc; // max/min linie; max/min coloana
+
+    for (int i = 1; i <= m; ++i)
+    {
+        ml = A[i][1];
+
+        for (int j = 1; j <= n; ++j)
+            if (A[i][j] > ml)
+                ml = A[i][j];
+
+        for (int j = 1; j <= n; ++j)
+            if (A[i][j] == ml)
+        {
+            mc = A[1][j];
+
+            for (int k = 1; k <= m; ++k)
+                if (A[k][j] < mc)
+                    mc = A[k][j];
+
+            if (ml == mc)
+                ++cnt;
+        }
+    }
+
+    for (int i = 1; i <= m; ++i)
+    {
+        ml = A[i][1];
+
+        for (int j = 1; j <= n; ++j)
+            if (A[i][j] < ml)
+                ml = A[i][j];
+
+        for (int j = 1; j <= n; ++j)
+            if (A[i][j] == ml)
+        {
+            mc = A[0][j];
+
+            for (int k = 0; k <= m; ++k)
+                if (A[k][j] > mc)
+                    mc = A[k][j];
+
+            if (ml == mc)
+                ++cnt;
+        }
+    }
+
+    return cnt;
+}
+
 int subI_B(int n)
 {
     int n2 = n;
