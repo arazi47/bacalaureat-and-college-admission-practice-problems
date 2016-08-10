@@ -48,7 +48,6 @@ int F_REC(int a, int b)
         return F_REC(a % 10, b / 2); // nu e corecta linia
     else
         return F_REC((a * a) % 10, b / 2);
-
 }
 
 void SubI_3(int a[], int &n)
