@@ -34,7 +34,7 @@ bool SuperPrim(int n)
         if (Prim(n))
             return true;
 
-        n = n % putere * 10 + n / putere;
+        n = n % putere * 10 + n / putere; // Mutam prima cifra a numarului in pozitia unitatilor
     }
 
     return false;
