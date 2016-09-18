@@ -163,9 +163,16 @@ void BI_57_S3_REC(int x)
 /*
 MAXIM 100 NUMERE DE MAXIM 4 CIFRE FIECARE
 scriem toate valorile distincte obtinute ca suma din input.in
-crescator...
+sumele afisate la final trebuie sa fie ordonate crescator
+sumele se calculeaza:
+primul numar cu toate celelalte (in afara de el insusi)
+al doilea cu toate celelalte (in afara de el insusi)
+...etc...
+daca avem 1 2 3
+facem 1 + 2, 1 + 3, 2 + 1, 2 + 3, 3 + 1, 3 + 2
+si scoatem valorile care sunt la fel (ex 1 + 2 si 2 + 1)
 */
-void BI_57_S3_4()
+void BI_57_S3_4() // bac info varianta 57 subiectul 3 exercitiul 4
 {
     int v[100];
     int m = 0;
@@ -184,11 +191,11 @@ void BI_57_S3_4()
     int vecsuma_nou[9999];
     for (int i = 0; i < vecsuma_m; ++i)
         if (!a_fost[vecsuma[i]]) // a_fost -> sa verificam daca numarul e unic... INEFICIENT
-    {
-        a_fost[vecsuma[i]] = 1;
-        vecsuma_nou[x++] = vecsuma[i];
-        //cout << vecsuma[i] << ' ';
-    }
+        {
+            a_fost[vecsuma[i]] = 1;
+            vecsuma_nou[x++] = vecsuma[i];
+            //cout << vecsuma[i] << ' ';
+        }
     // putem trece la sortarea vectorului
     // BUBBLESORT //
     bool ch; // change
@@ -197,13 +204,14 @@ void BI_57_S3_4()
         ch = 0;
         for (int i = 0; i < x - 1; ++i)
             if (vecsuma_nou[i] > vecsuma_nou[i + 1])
-        {
-            tmp = vecsuma_nou[i];
-            vecsuma_nou[i] = vecsuma_nou[i + 1];
-            vecsuma_nou[i + 1] = tmp;
-            ch = 1;
-        }
-    } while (ch);
+            {
+                tmp = vecsuma_nou[i];
+                vecsuma_nou[i] = vecsuma_nou[i + 1];
+                vecsuma_nou[i + 1] = tmp;
+                ch = 1;
+            }
+    }
+    while (ch);
     // afisam vectorul final:
     // sumele in ordine crescatoare
     for (int i = 0; i < x; ++i)
@@ -243,8 +251,310 @@ void multiplu_prog()
     cout << "nu";*/
 }
 
+void BI_36_S1_2()
+{
+    int s = 0, v = 1, a, b;
+    //cin >> v;
+    while (v <= 99)
+    {
+        a = v % 10;
+        b = (v / 10) % 10;
+        s = s + a * 10 + b;
+        //cin >> v;
+        v++;
+    }
+
+    cout << s;
+}
+
+void BI_35_S2_5()
+{
+    int n, min, a[100][100];
+    cin >> n;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j)
+            cin >> a[i][j];
+
+    for (int i = 1; i <= n; ++i)
+    {
+        min = a[1][i];
+        for (int j = 1; j <+ n; ++j)
+            if (a[j][i] < min)
+                min = a[j][i];
+
+        cout << min << ' ';
+    }
+}
+
+void BI_35_S3_2(int &a, int b)
+{
+    a = a - 5;
+    b = a - 2;
+
+    cout << a << b;
+}
+
+// Afiseaza numerele care incep si se termina cu aceeasi cifra
+// Se afiseaza si cifrele < 10
+void BI_35_S3_3()
+{
+    int n, x, copie, pc, uc, inv;
+    cin >> n;
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> x;
+
+        if (x < 10) { cout << x << " ESTE\n"; continue; }
+        uc = x % 10;
+        copie = x;
+        inv = 0;
+        while (copie)
+        {
+            inv = inv * 10 + copie % 10;
+            copie /= 10;
+        }
+        pc = inv % 10;
+        //cout << pc << ' ' << uc << endl;
+
+        if (pc == uc)
+            cout << x << " ESTE\n";
+    }
+}
+
+// Calculeaza suma divizorilor proprii
+// Divizori proprii sunt TOTI in afara de 1 si el insusi (acestia sunt improprii)
+int sum(int n)
+{
+    int s = 0;
+    for (int d = 2; d <= n / 2; ++d)
+        if (n % d == 0)
+            s += d;
+
+    return s;
+}
+
+void BI_35_S3_4()
+{
+    int n;
+    cin >> n;
+    int v[n];
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> v[i];
+        v[i] = sum(v[i]);
+    }
+
+    int tmp;
+    // Si metoda asta e corecta
+    /*
+    for (int i = 0; i < n - 1; ++i)
+        for (int j = i + 1; j < n; ++j)
+            if (v[i] > v[j])
+    {
+        tmp = v[i];
+        v[i] = v[j];
+        v[j] = tmp;
+    }*/
+
+    bool ch;
+    do
+    {
+        ch = false;
+        for (int i = 0; i < n - 1; ++i)
+        {
+            if (v[i] > v[i + 1])
+            {
+                tmp = v[i];
+                v[i] = v[i + 1];
+                v[i + 1] = tmp;
+                ch = true;
+            }
+        }
+    } while (ch);
+
+    for (int i = 0; i < n; ++i)
+        cout << v[i] << ' ';
+}
+
+// Calculeaza cmmdc-ul a mai multor numere
+void cmmdc_nr()
+{
+    int a, b, r;
+    cin >> a >> b;
+    while (b)
+    {
+        r = a % b;
+        a = b;
+        b = r;
+    }
+    int input;
+    cin >> input;
+    while (input)
+    {
+        b = input;
+        while (b)
+        {
+            r = a % b;
+            a = b;
+            b = r;
+        }
+        cin >> input;
+    }
+
+    cout << a;
+}
+
+void descompunere_factori_primi()
+{
+    int n, p;
+    int d = 2; // Divizor
+    cin >> n; // Numar
+    while (n > 1)
+    {
+        p = 0; // Putere
+
+        while (n % d == 0)
+        {
+            ++p;
+            n /= d;
+        }
+
+        if (p)
+            cout << d << " la puterea " << p << endl;
+
+        ++d;
+    }
+}
+
+void fibonacci()
+{
+    int a, b, c = 0;
+    a = b = 1;
+    int cautat;
+    cin >> cautat;
+    if (cautat == 1)
+    {
+        cout << "GASIT";
+        return;
+    }
+    while (c < cautat)
+    {
+        c = a + b;
+        a = b;
+        b = c;
+
+        if (c == cautat)
+        {
+            cout << "GASIT";
+            return;
+        }
+    }
+
+    cout << "nu face parte din fibonacci";
+}
+
+void BI_36_S2_5()
+{
+    int n, m, v[100][100];
+    cin >> m >> n;
+    for (int i = 1; i <= m; ++i)
+        for (int j = 1; j <= n; ++j)
+            cin >> v[i][j];
+
+    int min;
+    for (int i = m; i >= 1; --i)
+    {
+        min = v[i][1];
+        for (int j = 1; j <= n; ++j)
+            if (v[j][i] < min)
+                min = v[j][i];
+
+        cout << min << ' ';
+    }
+}
+
+// Returneaza ultima cifra para a parametrului
+// Daca parametrul nu contine cifre pare, returneaza -1
+int cifra(int a)
+{
+    if (a == 0)
+        return 0;
+
+    while (a)
+    {
+        if ((a % 10) % 2 == 0)
+            return a % 10;
+
+        a /= 10;
+    }
+
+    return -1;
+}
+
+void BI_36_S3_3()
+{
+    int n;
+    cin >> n;
+    int x;
+    int vdf[10] = {};
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> x;
+        vdf[cifra(x)]++;
+    }
+    int nr = 0;
+    for (int i = 10 - 1; i >= 0; --i)
+    {
+        while (vdf[i])
+        {
+            nr = nr * 10 + i;
+            vdf[i]--;
+        }
+    }
+
+    cout << nr;
+}
+
 int main()
 {
+    //BI_36_S3_3();
+
+    //cout << cifra(0);
+    //cout << cifra(8345);
+
+    //BI_36_S2_5();
+
+    //int x;
+    //char s[] = "EAENMX";
+    //x = strlen(s);
+    //for (int i = 0; i < x / 2; i++)
+    //    cout << s[i] << s[x - i - 1];
+
+    //fibonacci();
+
+    //descompunere_factori_primi();
+
+    //cmmdc_nr();
+
+    //BI_35_S3_4();
+
+    //BI_35_S3_3();
+
+    //int a = 3, b = 9;
+    //BI_35_S3_2(b, a);
+    //BI_35_S3_2(b, b);
+
+    //BI_35_S2_5();
+
+    /*
+    char c[] = "tamara";
+    for (int i = 0; i < 3; i++)
+        c[i] = c[i + 1];
+    cout << c;
+    */
+
+    //BI_36_S1_2();
+
     //multiplu_prog();
 
     //BI_57_S3_4();
