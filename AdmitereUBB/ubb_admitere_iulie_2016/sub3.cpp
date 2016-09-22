@@ -13,19 +13,27 @@ void citire()
         cin >> a[i];
 }
 
-// Nu merge!
 void verifica_munte(int start, int _end)
 {
-    int poz_switch = 0;
-    for (int i = start; i < _end; ++i)
-        if (i + 1 < i)
+    int i = start;
+    while ((i < _end) && (a[i] < a[i + 1]))
+        ++i;
+
+    // Am trecut de inceput, dar nu am ajuns la sfarsit
+    bool munte = ((i > start) && (i < _end));
+
+    if (munte)
     {
-        poz_switch = i;
-        break;
+        while ((i < _end) && (a[i] > a[i + 1]))
+            ++i;
+
+        munte = (i == _end);
     }
 
-    if (poz_switch == 0)
-        cout << "Nu este munte.\n";
+    if (munte)
+        cout << "E munte." << endl;
+    else
+        cout << "Nu e munte." << endl;
 }
 
 void cea_mai_lunga_insula()
@@ -33,21 +41,25 @@ void cea_mai_lunga_insula()
     int max_start = 0, max_end = 0, lungime_max = 0;
     int start, _end;
 
-    for (int i = 1; i < n - 1; ++i) // Daca avem la capat 010
+    for (int i = 1; i < n - 1; ++i) // Daca avem la capat 010 (de aceea am pus n - 1)
     {
         start = 0;
         _end = 0;
 
-        if (a[i] == 0) // Incepe insula
+        // Incepe insula
+        if (a[i] == 0)
         {
-            //cout << "incepe insula la " << i + 1 << endl;
+            //cout << "Incepe insula la index " << i << endl;
+
             start = i + 1;
             _end = i + 1;
             for (int j = start; j <= n; ++j)
                 if (a[j] == 0)
                 {
                     _end = j - 1;
-                    i = _end + 1; // Se poate si fara. Dar ca sa sarim peste
+                    // Arghh, nu + 1, nu vrem sa sarim peste un 0
+                    // Pentru ca aici incepe alta insula
+                    i = _end; // + 1; // Se poate si fara. Dar ca sa sarim peste
                     break;
                 }
         }
@@ -62,7 +74,7 @@ void cea_mai_lunga_insula()
     }
 
     cout << max_start << ' ' << max_end << endl;
-    //verifica_munte(max_start, max_end);
+    verifica_munte(max_start, max_end);
 }
 
 bool P_DIST = true; // Puncte distincte
