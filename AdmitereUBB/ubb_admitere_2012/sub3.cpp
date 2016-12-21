@@ -4,111 +4,93 @@
 
 using namespace std;
 
-int n, X[100];
-int m, R[100];
-
-void citire()
+bool asemenea(int a, int b)
 {
-    cin >> n;
-    for (int i = 0; i < n; ++i)
-        cin >> X[i];
-}
-
-bool asemenea(int n, int m)
-{
-    int vdf1[10] = {}, vdf2[10] = {};
-
-    while (n)
+    int v[10] = {}, m[10] = {};
+    while (a)
     {
-        vdf1[n % 10]++;
-        n /= 10;
+        v[a % 10]++;
+        a /= 10;
     }
-
-    while (m)
+    while (b)
     {
-        vdf2[m % 10]++;
-        m /= 10;
+        m[b % 10]++;
+        b /= 10;
     }
 
     for (int i = 0; i < 10; ++i)
-        // Daca cifra de pe pozitia i exista in primul vector si in al doilea nu
-        if (vdf1[i] > 0 && vdf2[i] == 0)
+        if ((v[i] > 0 && m[i] == 0) || (v[i] == 0 && m[i] > 0))
             return false;
 
     return true;
 }
 
-void adauga_la_r(int val)
+void citeste(int v[], int &n)
 {
-    R[m++] = val;
-}
-
-void elimina_din_x(int index)
-{
-    for (int i = index; i < n - 1; ++i)
-        X[i] = X[i + 1];
-
-    --n;
-}
-
-void scoate_din_x(int val)
-{
+    cin >> n;
     for (int i = 0; i < n; ++i)
-        if (X[i] == val)
-        {
-            elimina_din_x(i);
-            break; // Break-ul e daca avem valori multiple
-            // De exemplu daca avem n = 4 si X = { 12, 21, 3, 21 }
-            // Daca nu punem break ni-l ia si pe 21 de la final
-            // Dar nu vrem sa faca asta, pentru ca nu e asemenea cu un numar de pe un index apropiat (plus/minus o pozitie)
-        }
+        cin >> v[i];
 }
 
-void gaseste_toate_asemenea_de_la(int startIndex)
+int gaseste_de_la(int v[], int n, int startI)
 {
-    int endIndex = startIndex;
-    for (int i = startIndex; i < n - 1; ++i)
-        if (asemenea(X[i], X[i + 1]))
-        {
-            endIndex = i + 1;
-        }
-
-        for (int i = startIndex; i <= endIndex; ++i)
-            adauga_la_r(X[i]);
-
-        // Nu merge X-ul din cauza asta
-        // Trebuie sa retinem undeva valorile initiale pe care trebuie sa le scoatem
-        // Pentru ca indexurile se schimba cand scoatem un element
-        //for (int i =  startIndex; i <= endIndex; ++i)
-          //  scoate_din_x(X[i]);
-
-        // De fapt avem valorile in R...
-        for (int i = 0; i < m; ++i)
-            scoate_din_x(R[i]);
+    for (int i = startI; i < n - 1; ++i)
+        if (!asemenea(v[i], v[i + 1]))
+            return i;
 }
 
-void elimina_asemenea()
+void gaseste_numere_asemenea(int v[], int n, int R[], int &m)
 {
     for (int i = 0; i < n - 1; ++i)
-        if (asemenea(X[i], X[i + 1]))
-            //elimina_index(i);
-            gaseste_toate_asemenea_de_la(i);
+        if(asemenea(v[i], v[i + 1]))
+        {
+            int endi = gaseste_de_la(v, n, i);
+
+            if (i != endi)
+            {
+                for (int k = i; k <= endi; ++k)
+                {
+                    bool ok = true;
+                    for (int q = 0; q < m; ++q)
+                    {
+                        if (R[q] == v[k])
+                        {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    if (ok)
+                        R[m++] = v[k];
+                }
+
+                i = endi;
+            }
+        }
 }
 
-void afiseaza(int marime, int v[])
+void afiseaza(int sir[], int m)
 {
-    for (int i = 0; i < marime; ++i)
-        cout << v[i] << ' ';
-    cout << '\n';
+    if (m == 0)
+    {
+        cout << "R este sirul vid";
+        return;
+    }
+
+    for (int i = 0; i < m; ++i)
+        cout << sir[i] << ' ';
 }
 
 int main()
 {
-    citire();
-    elimina_asemenea();
+    int X[100], n;
+    int R[100], m = 0;
+
+    citeste(X, n);
+
+    gaseste_numere_asemenea(X, n, R, m);
     cout << "X = ";
-    afiseaza(n, X);
+    afiseaza(X, n);
+    cout << endl;
     cout << "R = ";
-    afiseaza(m, R);
-    return 0;
+    afiseaza(R, m);
 }
