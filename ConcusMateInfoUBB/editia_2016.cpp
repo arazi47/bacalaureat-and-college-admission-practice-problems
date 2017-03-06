@@ -4,160 +4,115 @@
 
 using namespace std;
 
-// Virusi, recursiv
-int vRec(int n, int k)
+int nrOre(int n, int k)
 {
     if (n < k)
         return 0;
+
     if (n % 2 == 0)
-        return 1 + vRec(n / 2, k);
-    if (n % 2 != 0)
-        return 1 + vRec(n + 1, k);
+        return 1 + nrOre(n / 2, k);
+    else
+        return 1 + nrOre(n + 1, k);
 }
 
-// Virusi
-int nrOre(int n, int k)
+void gasesteMax(int n, int *x, int &a, int &b, int &c)
 {
-    int nrOre = 0;
-    while (n >= k)
+    int j, tmp;
+    for (int i = 1; i < n; ++i)
     {
-        if (n % 2 == 0)
+        j = i - 1;
+        tmp = x[i];
+        while (j >= 0 && tmp > x[j])
         {
-            n /= 2;
-            ++nrOre;
+            x[j + 1] = x[j];
+            --j;
         }
-        if (n % 2 != 0)
-        {
-            ++n;
-            ++nrOre;
-        }
+
+        x[j + 1] = tmp;
     }
 
-    return nrOre;
+    a = x[0];
+    b = x[1];
+    c = x[2];
 }
 
-void prodMax(int n, int v[], int &a, int &b, int &c)
-{
-    bool ch = false; // Change
-    int tmp;
-    do
-    {
-        ch = false;
-        for (int i = 0; i < n - 1; ++i)
-            if (v[i] < v[i + 1])
-            {
-                tmp = v[i];
-                v[i] = v[i + 1];
-                v[i + 1] = tmp;
-                ch = true;
-            }
-    } while (ch);
-
-    a = v[0];
-    b = v[1];
-    c = v[2];
-}
-
-void triunghiulLuiPascal(int r, int linie[])
-{
-    int linieNoua[33];
-    linie[0] = 1;
-    linie[1] = 1;
-
-    for (int ri = 2; ri <= r; ++ri)
-    {
-        linieNoua[0] = 1;
-        linieNoua[ri] = 1;
-
-        for (int i = 1; i < ri; ++i)
-            linieNoua[i] = linie[i - 1] + linie[i];
-
-        for (int i = 0; i <= ri; ++i)
-            linie[i] = linieNoua[i];
-    }
-}
-
-void citire(int &n, int a[])
+void citeste(int &n, int *a)
 {
     cin >> n;
     for (int i = 0; i < n; ++i)
         cin >> a[i];
 }
 
-void afisare(int n, int a[])
+bool palindrom(int n, int *a)
 {
-    for (int i = 0; i < n; ++i)
-        cout << a[i] << ' ';
+    for (int i = 0, j = n - 1; i < n && j >= 0; ++i, --j)
+        if (a[i] != a[j])
+            return false;
+
+    return true;
 }
 
-void afisare(int nrPerm)
+int nrPermutari(int n, int *a)
 {
-    if (nrPerm != -1)
-        cout << "Da! Nr permutari ciclice: " << nrPerm;
-    else
-        cout << "Nu!";
-}
-
-bool estePalindrom(int a[], int start, int _end)
-{
-	int i = start;
-	int j = _end;
-	//se verifica perechi de elemente (cu indici simetrici fata de mijlocul secventei)
-	//cand se gaseste o pereche de elemente diferite se opreste cautarea
-	while ((a[i] == a[j]) && (i < j))
+    int cnt = 0;
+    while (!palindrom(n, a))
     {
-		i++;
-		j--;
-	}
-	//daca s-au verificat toate perechile si toate au avut elemente egale
-	if (i >= j)
-		return true;
-	else
-		return false;
-}
+        ++cnt;
+        if (cnt > n)
+            return -1;
 
-void determinaPalindroame(int n, int a[])
-{
-    for (int i = 0; i < n; ++i)
-        a[n + i] = a[i];
-
-    int nrPerm = -1;
-    for (int i = 0; i < n; ++i)
-    {
-        if (estePalindrom(a, i, i + n - 1))
-        {
-            nrPerm = i;
-            break;
-        }
+        int pe = a[0]; // primul element
+        for (int i = 0; i < n - 1; ++i)
+            a[i] = a[i + 1];
+        a[n - 1] = pe;
     }
 
-    afisare(nrPerm);
-    //afisare(n, a);
+    return cnt;
+}
+
+void afiseaza(int n, int *a)
+{
+    int nrPerm = nrPermutari(n, a);
+    if (nrPerm == -1)
+        cout << "Nu";
+    else
+        cout << "Da, numarul de permutari ciclice este " << nrPerm;
 }
 
 int main()
 {
-    //cout << nrOre(11, 3) << endl;
-    //cout << vRec(11, 3) << endl;
+    /*
+    int n, v[100] = {};
+    cin >> n;
+    ++n; // liniile incep de la zero
 
-    //int n, v[100];
-    //cin >> n;
-    //for (int i = 0; i < n; ++i)
-    //    cin >> v[i];
+    v[0] = 1;
+    v[n - 1] = 1;
+    for (int i = 1; i < n; ++i)
+        triunghi(n, v);
 
-    //int a, b, c;
-    //prodMax(n, v, a, b, c);
-    //cout << a << ' ' << b << ' ' << c << endl;
+    for (int i = 0; i < n; ++i)
+        cout << v[i] << ' ';
+    */
 
-    //int linie[100], r;
-    //cin >> r;
-    //triunghiulLuiPascal(r, linie);
+    /*
+    int n, k;
+    cin >> n >> k;
+    cout << nrOre(n, k);
+    */
 
-    //for (int i = 0; i < r + 1; ++i)
-    //    cout << linie[i] << ' ';
+    /*
+    int n, x[100], a, b, c;
+    cin >> n;
+    for (int i = 0; i < n; ++i)
+        cin >> x[i];
+    gasesteMax(n, x, a, b, c);
+    cout << a << ' ' << b << ' ' << c;
+    */
 
-    // Subiectul 3
-    //int n, a[100];
-    //citire(n, a);
-    //determinaPalindroame(n, a);
+    int n, a[100];
+    citeste(n, a);
+    afiseaza(n, a);
+
+    return 0;
 }
