@@ -4,92 +4,137 @@
 
 using namespace std;
 
-void citeste(int &n, int A[][100])
+int cmmmc(int a, int b)
 {
-    cin >> n;
-    for (int i = 1; i <= n; ++i)
-        for (int j= 1; j <= n; ++j)
-            cin >> A[i][j];
+    int r, a1 = a, b1 = b;
+    while (b)
+    {
+        r = a % b;
+        a = b;
+        b = r;
+    }
+
+    return (a1 * b1) / a;
+}
+
+int cmmmcSir(int n, int* X)
+{
+    int c = cmmmc(X[0], X[1]);
+    for (int i = 2; i < n; ++i)
+        c = cmmmc(c, X[i]);
+
+    return c;
+}
+
+int c1(int n)
+{
+    int v[9], l = 0;
+    while (n)
+    {
+        v[l++] = n % 10;
+        n /= 10;
+    }
+
+    int t = v[0];
+    v[0] = v[l - 1];
+    v[l - 1] = t;
+
+    int rez = 0;
+    for (int i = l - 1; i >= 0; --i)
+        rez = rez * 10 + v[i];
+
+    return rez;
+}
+
+int c2(int n)
+{
+
 }
 
 bool prim(int n)
 {
-    for (int d = 2; d * d <= n; ++d)
+    if (n < 2)
+        return false;
+    if (n % 2 == 0 && n != 2)
+        return false;
+    for (int d = 3; d * d <= n; d += 2)
         if (n % d == 0)
             return false;
+
     return true;
 }
 
 bool superPrim(int n)
 {
-    while (n)
-    {
-        if (!prim(n))
-            return false;
-
+    while (prim(n))
         n /= 10;
-    }
 
-    return true;
+    return (n == 0);
 }
 
-void tiparesteSir(int marime, int sir[])
+void insereazaDesc(int &n, int* X, int val)
 {
-    for (int i = 0; i < marime; ++i)
-        cout << sir[i] << ' ';
-}
-
-// Inseram val in X in mod descrescator
-void insereaza(int &m, int X[], int val)
-{
-    for (int i = 0; i < m; ++i)
+    for (int i = 0; i < n; ++i)
         if (X[i] == val)
             return;
 
-    int i = 0;
-    while (val < X[i])
-        ++i;
+    int j = n - 1;
+    while (j >= 0 && val > X[j])
+    {
+        X[j + 1] = X[j];
+        --j;
+    }
 
-    if (i < m)
-    {
-        for (int j = m; j > i; --j)
-            X[j] = X[j - 1];
-        X[i] = val;
-        ++m;
-    }
-    else // i == m; i > m e imposibil
-    {
-        X[m++] = val;
-    }
+    X[j + 1] = val;
+    ++n;
+}
+
+void citeste(int &n, int A[][50])
+{
+    cin >> n;
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            cin >> A[i][j];
+}
+
+void tipareste(int n, int *v)
+{
+    for (int i = 0; i < n; ++i)
+        cout << v[i] << ' ';
+}
+
+void construiesteX(int &l, int *X, int n, int A[][50])
+{
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+        {
+            if (i > j && i + j < n - 1)
+            {
+            //cout << A[i][j] << ' ';
+                if (superPrim(A[i][j]))
+                    insereazaDesc(l, X, A[i][j]);
+            }
+            else if (i < j && i + j > n - 1)
+            {
+                //cout << A[i][j] << ' ';
+                if (superPrim(A[i][j]))
+                    insereazaDesc(l, X, A[i][j]);
+            }
+        }
 }
 
 int main()
 {
-    int n, A[100][100];
+    int n, A[50][50];
     citeste(n, A);
 
-    int m = 0, X[100] = {};
+    int l = 0, X[100];
+    construiesteX(l, X, n, A);
 
-    for (int i = 1; i <= n; ++i)
-        for (int j = 1; j <= n; ++j)
-        {
-            // Sub diagonala principala
-            // Si deasupra diagonalei secundare
-            if (i > j && i + j < n + 1)
-                if (superPrim(A[i][j]))
-                    insereaza(m, X, A[i][j]);
-
-            // Deasupra diagonalei principale
-            // Si sub diagonala secundara
-            if (i < j && i + j > n + 1)
-                if (superPrim(A[i][j]))
-                    insereaza(m, X, A[i][j]);
-        }
-
-    if (m == 0)
-        cout << "Sirul este vid" << endl;
+    if (l == 0)
+        cout << "Sirul este vid";
     else
-        tiparesteSir(m, X);
+        tipareste(l, X);
 
     return 0;
 }
