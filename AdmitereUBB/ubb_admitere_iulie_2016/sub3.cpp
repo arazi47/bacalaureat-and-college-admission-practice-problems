@@ -4,123 +4,115 @@
 
 using namespace std;
 
-int a[100], n;
-
-void citire()
+void citeste(int &n, int *a)
 {
     cin >> n;
-    for (int i = 1; i <= n; ++i)
+    for (int i = 0; i < n; ++i)
         cin >> a[i];
 }
 
-void verifica_munte(int start, int _end)
+bool munte(int n, int *a, int st, int fin)
 {
-    int i = start;
-    while ((i < _end) && (a[i] < a[i + 1]))
-        ++i;
+    while (a[st] < a[st + 1])
+        ++st;
 
-    // Am trecut de inceput, dar nu am ajuns la sfarsit
-    bool munte = ((i > start) && (i < _end));
+    bool munte = st < fin;
 
     if (munte)
     {
-        while ((i < _end) && (a[i] > a[i + 1]))
+        while (st < fin && a[st] > a[st + 1])
+            ++st;
+    }
+
+    munte = munte && (st == fin);
+
+    return munte;
+}
+
+bool distincte(int n, int *a)
+{
+    int vdf[10000] = {};
+    for (int i = 0; i < n; ++i)
+    {
+        ++vdf[a[i]];
+        if (vdf[a[i]] > 1)
+            return false;
+    }
+
+    return true;
+}
+
+void ceaMaiFrecventa(int n, int *a, int &altitudine, int &cnt)
+{
+    int vdf[10000] = {}, max = 1;
+    for (int i = 0; i < n; ++i)
+    {
+        ++vdf[a[i]];
+        if (vdf[a[i]] > vdf[max] && a[i] != 0)
+            max = a[i];
+    }
+
+    altitudine = max;
+    cnt = vdf[max];
+}
+
+void ceaMaiLungaInsula(int n, int *a, int &st, int &fin)
+{
+    int stMax = 0, finMax = 0, stCurr = 0, finCurr = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        while (a[i] == 0)
             ++i;
 
-        munte = (i == _end);
-    }
+        stCurr = i;
 
-    if (munte)
-        cout << "E munte." << endl;
-    else
-        cout << "Nu e munte." << endl;
-}
+        while (a[i] != 0)
+            ++i;
 
-void cea_mai_lunga_insula()
-{
-    int max_start = 0, max_end = 0, lungime_max = 0;
-    int start, _end;
+        finCurr = i - 1;
 
-    for (int i = 1; i < n - 1; ++i) // Daca avem la capat 010 (de aceea am pus n - 1)
-    {
-        start = 0;
-        _end = 0;
+        // daca la sfarsitul sirului nu avem 0...
+        if (finCurr >= n)
+            break;
 
-        // Incepe insula
-        if (a[i] == 0)
+        if (finCurr - stCurr > finMax - stMax)
         {
-            //cout << "Incepe insula la index " << i << endl;
-
-            start = i + 1;
-            _end = i + 1;
-            for (int j = start; j <= n; ++j)
-                if (a[j] == 0)
-                {
-                    _end = j - 1;
-                    // Arghh, nu + 1, nu vrem sa sarim peste un 0
-                    // Pentru ca aici incepe alta insula
-                    i = _end; // + 1; // Se poate si fara. Dar ca sa sarim peste
-                    break;
-                }
-        }
-
-        if (start != _end) // Nu e insula daca sunt zerouri consecutive sau daca nu exista un zero pereche
-            if (_end - start > lungime_max)
-        {
-            lungime_max = _end - start;
-            max_start = start;
-            max_end = _end;
+            finMax = finCurr;
+            stMax = stCurr;
         }
     }
 
-    cout << max_start << ' ' << max_end << endl;
-    verifica_munte(max_start, max_end);
+    st = stMax;
+    fin = finMax;
 }
 
-bool P_DIST = true; // Puncte distincte
-
-void puncte_distincte()
-{
-    for (int i = 1; i < n; ++i)
-        for (int j = i + 1; j <= n; ++j)
-            if (a[i] == a[j] && a[i] != 0) // 0 nu e altitudine
-            {
-                P_DIST = false;
-                break;
-            }
-
-    if (!P_DIST)
-        cout << "Altitudinile nu sunt distincte\n";
-    else
-        cout << "Altitudinile sunt distincte\n";
-}
-
-void altitudine_frecv()
-{
-    int vdf[10000] = {}; // Vectorul de frecventa al altitudinilor
-    int aparitii = 0, index_;
-
-    for (int i = 1; i <= n; ++i)
-        if (a[i] != 0) // 0 nu e altitudine
-            ++vdf[a[i]];
-
-    for (int i = 1; i < 10000; ++i) // Incepem de la 1 pentru ca 0 nu e altitudine
-        if (vdf[i] > aparitii)
-        {
-            aparitii = vdf[i];
-            index_ = i;
-        }
-
-    cout << index_ << " apare de "  << aparitii << " ori.\n";
-}
-
+// 15 10 2 1 0 7 0 1 2 13 5 0 0 8 5 2
+// 10 1 2 0 1 2 13 0 0 1 2
 int main()
 {
-    citire();
-    cea_mai_lunga_insula();
-    puncte_distincte();
-    if (!P_DIST)
-        altitudine_frecv();
+    int n, a[100];
+    citeste(n, a);
+
+    int st = 0, fin = 0;
+    ceaMaiLungaInsula(n, a, st, fin);
+
+    // in exemple se incepe indexarea de la 1
+    cout << st + 1 << ' ' << fin + 1 << endl;
+
+    if (munte(n, a, st, fin))
+        cout << "Este munte" << endl;
+    else
+        cout << "Nu este munte" << endl;
+
+    if (distincte(n, a))
+        cout << "Altitudinile sunt distincte" << endl;
+    else
+    {
+        cout << "Altitudinile nu sunt distincte" << endl;
+        int alt = 0, cnt = 0;
+        ceaMaiFrecventa(n, a, alt, cnt);
+        cout << "Cea mai frecventa altitudine este " << alt << " si apare de " << cnt << " ori" << endl;
+    }
 
     return 0;
 }

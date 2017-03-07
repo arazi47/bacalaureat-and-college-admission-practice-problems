@@ -39,7 +39,7 @@ void determina(int p, int q, int n, int &k, int *x)
 // n == 3: 1 2 1 3 1 2 1
 void turnuri(int n)
 {
-    int s = 0   , cnt = 0;
+    int s = 0, cnt = 0;
     for (int i = 1; i < n; ++i)
     {
         ++s;
