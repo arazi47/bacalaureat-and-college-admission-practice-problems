@@ -4,14 +4,47 @@
 
 using namespace std;
 
-void citeste(int &n, int X[])
+void determina_cifre(int &n, int *v, int a)
 {
-    cin >> n;
-    for (int i = 1; i <= n; ++i)
-        cin >> X[i];
+    n = 0;
+    while (a)
+    {
+        v[n++] = a % 10;
+        a /= 10;
+    }
+
+    // inversam vectorul, sa obtinem numarul initial, nu cel oglindit
+    for (int i = 0; i < n / 2; ++i)
+    {
+        int t = v[i];
+        v[i] = v[n - 1 - i];
+        v[n - 1 - i] = t;
+    }
 }
 
-bool prefix(int a, int b)
+bool prefix(int p, int n)
+{
+    int cp; // cifre p
+    int cn; // cifre n;
+
+    int v1[5], v2[5]; // cifrele numerelor p si n;
+
+    determina_cifre(cp, v1, p);
+    determina_cifre(cn, v2, n);
+
+    // daca numarul de cifre este egal sau n are mai putine cifre decat p
+    if (cn <= cp)
+        return false;
+
+    for (int i = 0; i < cp; ++i)
+        if (v1[i] != v2[i])
+            return false;
+
+    return true;
+}
+
+// mult mai eficient
+bool prefix2(int a, int b)
 {
     while (b > a)
     {
@@ -22,54 +55,57 @@ bool prefix(int a, int b)
     return false;
 }
 
-void detsecv2(int st, int &en, int X[])
+void citire(int &n, int *X)
 {
-    int i = st, j = st + 1;
-    while (prefix(X[i], X[j]))
-    {
-        ++i;
-        ++j;
-    }
-
-    en = j;
+    cin >> n;
+    for (int i = 0; i < n; ++i)
+        cin >> X[i];
 }
 
-void detsecv(int n, int X[], int &secvs, int &secve)
+void tipareste_secventa(int st, int fin, int *X)
 {
-    int max_e = 0, max_s = 0;
-    for (int i = 1; i < n - 1; ++i)
+    if (st == -1 && fin == -1)
+    {
+        cout << "Secventa este vida";
+        return;
+    }
+
+    while (st <= fin)
+        cout << X[st++] << ' ';
+}
+
+void determina(int n, int *X, int &st, int &fin)
+{
+    int stmax = 0, finmax = 0;
+    for (int i = 0; i < n; ++i)
+    {
         if (prefix(X[i], X[i + 1]))
         {
-            secvs = i;
-            detsecv2(secvs, secve, X);
+            st = i;
+            fin = i + 1;
+            while (prefix(X[st], X[fin]))
+                ++fin;
 
-            if (secve - secvs > max_e - max_s)
+            i = fin; // sarim peste secventa
+            --fin; // merge pana la capat + 1
+            if (fin - st > finmax - stmax)
             {
-                max_e = secve;
-                max_s = secvs;
-                i = secve + 1;
+                stmax = st;
+                finmax = fin;
             }
         }
-
-        secvs = max_s;
-        secve = max_e;
+    }
 }
 
+// 9 523 742 7421 742 12 123 1234 87 875
 int main()
 {
-    int n, X[100], secvs = 0, secve = 0;
-    citeste(n, X);
-    detsecv(n, X, secvs, secve);
-    if (secve - secvs > 0)
-    {
-        while (secvs != secve)
-        {
-            cout << X[secvs] << ' ';
-            ++secvs;
-        }
-    }
-    else
-        cout << "Secventa este vida";
+    int n, X[100];
+    citire(n, X);
 
+    int st = -1, fin = -1;
+    determina(n, X, st, fin);
+
+    tipareste_secventa(st, fin, X);
     return 0;
 }

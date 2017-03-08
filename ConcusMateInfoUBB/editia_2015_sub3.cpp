@@ -6,17 +6,15 @@ using namespace std;
 
 struct triplet
 {
-    int i;  // linie
-    int j;  // coloana
-    int val; // valoare
+    // linie, coloana, valoare
+    int i, j, val;
 };
 
 struct matrice_rara
 {
-    int n; // nr linii
-    int m; // nr coloane
+    int n, m; // numarul de linii si coloane ale matricei
     triplet tr[100];
-    int nr_el; // numarul elementelor
+    int nr_el; // numarul de elemente
 
     matrice_rara()
     {
@@ -26,68 +24,71 @@ struct matrice_rara
 
 bool mai_mic_lexicografic(triplet t1, triplet t2)
 {
-    return (t1.i < t2.j || (t1.i == t2.i && t1.j < t2.j));
+    return (t1.i < t2.i) || (t1.i == t2.i && t1.j < t2.j);
 }
 
-void citeste_matrice(matrice_rara &m)
+void inserare(matrice_rara &m, int l, int c, int v)
+{
+    m.tr[m.nr_el].i = l;
+    m.tr[m.nr_el].j = c;
+    m.tr[m.nr_el].val = v;
+    ++m.nr_el;
+}
+
+int gaseste_element(matrice_rara &m, int l, int c)
+{
+    for (int i = 0; i < m.nr_el; ++i)
+        if (m.tr[i].i == l && m.tr[i].j == c)
+            return m.tr[i].val;
+
+    return 0;
+}
+
+void citeste(matrice_rara &m)
 {
     cin >> m.n >> m.m;
-    int l, c, v; // linie, coloana, valoare
+    int l, c, v;
     cin >> l >> c >> v;
     while (l != -1 && c != -1 && v != -1)
     {
-        m.tr[m.nr_el].i = l - 1;
-        m.tr[m.nr_el].j = c - 1;
-        m.tr[m.nr_el].val = v;
-        ++m.nr_el;
+        if (gaseste_element(m, l, c) == 0)
+            inserare(m, l, c, v);
         cin >> l >> c >> v;
     }
 }
 
-int gaseste_element(matrice_rara m, int i, int j)
+void suma(matrice_rara a, matrice_rara b, matrice_rara &c)
 {
-    for (int k = 0; k < m.nr_el; ++k)
-        if (m.tr[k].i == i && m.tr[k].j == j)
-            return m.tr[k].val;
-    return 0;
+    c.n = a.n;
+    c.m = a.m;
+
+    for (int i = 1; i <= a.n; ++i)
+        for (int j = 1; j <= a.m; ++j)
+        {
+            c.tr[c.nr_el].i = i;
+            c.tr[c.nr_el].j = j;
+            c.tr[c.nr_el].val = gaseste_element(a, i, j) + gaseste_element(b, i, j);
+            ++c.nr_el;
+        }
 }
 
-void tipareste_matrice_rara(matrice_rara m)
+void tipareste(matrice_rara &m)
 {
-    for (int i = 0; i < m.n; ++i)
+    for (int i = 1; i <= m.n; ++i)
     {
-        for (int j = 0; j < m.m; ++j)
+        for (int j = 1; j <= m.m; ++j)
             cout << gaseste_element(m, i, j) << ' ';
         cout << endl;
     }
 }
 
-void determina_matrice(matrice_rara A, matrice_rara B, matrice_rara &C)
-{
-    C.m = A.m;
-    C.n = A.n;
-
-    for (int i = 0; i < C.m; ++i)
-    {
-        for (int j = 0; j < C.n; ++j)
-        {
-            if (gaseste_element(A, i, j) + gaseste_element(B, i, j) != 0)
-            {
-                C.tr[C.nr_el].i = i;
-                C.tr[C.nr_el].j = j;
-                C.tr[C.nr_el].val = gaseste_element(A, i, j) + gaseste_element(B, i, j);
-                ++C.nr_el;
-            }
-        }
-    }
-}
-
 int main()
 {
-    matrice_rara A, B, C;
-    citeste_matrice(A);
-    citeste_matrice(B);
-    determina_matrice(A, B, C);
-    tipareste_matrice_rara(C);
+    matrice_rara a, b, c;
+    citeste(a);
+    citeste(b);
+    suma(a, b, c);
+    tipareste(c);
+
     return 0;
 }
