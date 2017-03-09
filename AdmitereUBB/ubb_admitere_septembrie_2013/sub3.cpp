@@ -1,85 +1,48 @@
 // http://www.cs.ubbcluj.ro/wp-content/uploads/subiect-admitere-2013-septembrie-informatica.pdf
+
 #include <iostream>
 
 using namespace std;
 
-int X[1000], n;
-int Y[1000], m;
-
-void citire()
+void citire(int &n, int *x)
 {
     cin >> n;
     for (int i = 0; i < n; ++i)
-        cin >> X[i];
+        cin >> x[i];
 }
 
-bool prim(int n)
+void tiparire(int n, int *x)
 {
-    for (int d = 2; d * d <= n; ++d)
-        if (n % d == 0)
-            return false;
-    return true;
-}
-
-void OrdoneazaY()
-{
-    bool schimbare;
-    int tmp;
-
-    do
-    {
-        schimbare = false;
-        for (int i = 0; i < m - 1; ++i)
-        {
-            if (Y[i] > Y[i + 1])
-            {
-                tmp = Y[i];
-                Y[i] = Y[i + 1];
-                Y[i + 1] = tmp;
-                schimbare = true;
-            }
-        }
-    } while (schimbare == true);
-}
-
-void tiparesteY()
-{
-    if (m == 0)
+    if (n == 0)
         cout << "Sirul Y e vid.";
     else
-    {
-        OrdoneazaY();
-
-        for (int i = 0; i < m; ++i)
-            cout << Y[i] << ' ';
-    }
+        for (int i = 0; i < n; ++i)
+            cout << x[i] << ' ';
 }
 
-// Returneaza adevarat daca nr nu se afla in sirul Y
-bool NrNuEsteInY(int nr)
+void insereaza(int &m, int *Y, int val)
 {
     for (int i = 0; i < m; ++i)
-        if (Y[i] == nr)
-            return false;
+        if (Y[i] == val)
+            return;
 
-    return true;
+    Y[m++] = val;
 }
 
-void construiesteYPentruNr(int n)
+void descompune(int n, int &m, int *Y)
 {
     int d = 2, p;
-
     while (n > 1)
     {
         p = 0;
         while (n % d == 0)
         {
-            ++p;
             n /= d;
+            ++p;
         }
 
-        if (prim(d) && p == 1 && NrNuEsteInY(d))
-            Y[m++] = d;
+        if (p == 1)
+            insereaza(m, Y, d);
 
         ++d;
     }
@@ -87,10 +50,13 @@ void construiesteYPentruNr(int n)
 
 int main()
 {
-    citire();
+    int n, m = 0, X[500], Y[500];
+    citire(n, X);
+
     for (int i = 0; i < n; ++i)
-        construiesteYPentruNr(X[i]);
-    tiparesteY();
+        descompune(X[i], m, Y);
+
+    tiparire(m, Y);
 
     return 0;
 }
