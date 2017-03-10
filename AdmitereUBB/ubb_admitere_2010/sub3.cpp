@@ -4,58 +4,62 @@
 
 using namespace std;
 
-int n;
-int rez[100][100];
-
-bool Prime(int n)
+bool prim(int n)
 {
-    for (int d = 2; d * d <= n; ++d)
+    if (n < 2)
+        return false;
+    if (n % 2 == 0 && n != 2)
+        return false;
+    for (int d = 3; d * d <= n; d += 2)
         if (n % d == 0)
             return false;
+
     return true;
 }
 
-int NthPrimeNumber(int m)
+int kprim(int i)
 {
-    int cnt = 0;
-    for (int nr = 2; ; ++nr)
+    int n = 1, cnt = 0;
+    do
     {
-        if (Prime(nr))
+        ++n;
+        if (prim(n))
             ++cnt;
-
-        if (cnt == m)
-            return nr;
-    }
+    } while (cnt < i);
+    return n;
 }
 
-void printResult()
+void construieste(int n, int a[][101])
+{
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j)
+        {
+            if (i == j) // diagonala principala
+                a[i][j] = 0;
+            else if (i > j) // sub diagonala principala
+                a[i][j] = i;
+            else // deasupra diagonalei principale
+                a[i][j] = kprim(i);
+        }
+}
+
+void afiseaza(int n, int a[][101])
 {
     for (int i = 1; i <= n; ++i)
     {
         for (int j = 1; j <= n; ++j)
-            cout << rez[i][j] << ' ';
-
+            cout << a[i][j] << ' ';
         cout << endl;
     }
 }
 
 int main()
 {
+    int n, a[101][101];
     cin >> n;
 
-    // Incepem indexarea de la 1
-    for (int i = 1; i <= n; ++i)
-        for (int j = 1; j <= n; ++j)
-        {
-            if (i == j)
-                rez[i][j] = 0;
-            if (i > j) // Sub diagonala principala
-                rez[i][j] = i;
-            if (i < j) // Deasupra diagonalei principale
-                rez[i][j] = NthPrimeNumber(i);
-        }
-
-    printResult();
+    construieste(n, a);
+    afiseaza(n, a);
 
     return 0;
 }
