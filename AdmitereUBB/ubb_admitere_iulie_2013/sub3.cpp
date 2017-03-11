@@ -92,8 +92,8 @@ void construieste(int n, int *x, int &m, sir Y[])
 
 int main()
 {
-    int n, m = 0, X[100];
-    sir Y[100];
+    int n, m = 0, X[500];
+    sir Y[500];
 
     citire(n, X);
     construieste(n, X, m, Y);
