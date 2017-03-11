@@ -4,90 +4,100 @@
 
 using namespace std;
 
-int n = 1; // marime X
-int X[100];
-
-int m = 0; // marime Y
-struct sirY
+struct sir
 {
-    int nr;
+    int val;
     int aparitii;
-} Y[100];
+};
 
-bool ARE_ELEMENTE = false;
-
-void citire()
+void citire(int &n, int *x)
 {
-    cin >> X[n];
-    while (X[n] != 0)
+    n = 0;
+    int val;
+    cin >> val;
+    while (val != 0)
     {
-        ++n;
-        cin >> X[n];
+        x[n++] = val;
+        cin >> val;
     }
 }
 
-bool prim(int x)
+bool prim(int n)
 {
-    for (int d = 2; d * d <= x; ++d)
-        if (x % d == 0)
+    if (n < 2)
+        return false;
+
+    if (n % 2 == 0 && n != 2)
+        return false;
+
+    for (int d = 3; d * d <= n; d += 2)
+        if (n % d == 0)
             return false;
 
     return true;
 }
 
-int suma(int x)
+// calculeaza suma cifrelor unui numar
+int sc(int n)
 {
     int s = 0;
-
-    while (x)
+    while (n)
     {
-        s += x % 10;
-        x /= 10;
+        s += n % 10;
+        n /= 10;
     }
 
     return s;
 }
 
-void tiparire()
+void inserare(int &m, sir Y[], int val)
 {
-    if (!ARE_ELEMENTE)
+    for (int i = 0; i < m; ++i)
+        if (Y[i].val == val)
+        {
+            ++Y[i].aparitii;
+            return;
+        }
+
+    int j = m - 1;
+    while (j >= 0 && val < Y[j].val)
+    {
+        Y[j + 1] = Y[j];
+        --j;
+    }
+
+    Y[j + 1].val = val;
+    Y[j + 1].aparitii = 1;
+    ++m;
+}
+
+void tiparire(int n, sir Y[])
+{
+    if (n == 0)
     {
         cout << "Sirul Y este vid";
         return;
     }
 
-    for (int i = 1; i <= m; ++i)
-        cout << Y[i].nr << ' ' << Y[i].aparitii << endl;
+    for (int i = 0; i < n; ++i)
+        cout << Y[i].val << ' ' << Y[i].aparitii << endl;
 }
 
-void insereaza(int val1, int val2)
+void construieste(int n, int *x, int &m, sir Y[])
 {
-    if (!ARE_ELEMENTE)
-        ARE_ELEMENTE = true;
-
-    ++m;
-    Y[m].nr = val1;
-    Y[m].aparitii = val2;
-}
-
-void construiesteY()
-{
-    int vdf[10001] = {};
-
-    for (int i = 1; i <= n; ++i)
-        if (prim(suma(X[i])))
-            vdf[X[i]]++;
-
-    for (int i = 1; i <= 10000; ++i)
-        if(vdf[i] > 0)
-            insereaza(i, vdf[i]);
+    for (int i = 0; i < n; ++i)
+        if (prim(sc(x[i])))
+            inserare(m, Y, x[i]);
 }
 
 int main()
 {
-    citire();
-    construiesteY();
-    tiparire();
+    int n, m = 0, X[100];
+    sir Y[100];
+
+    citire(n, X);
+    construieste(n, X, m, Y);
+    tiparire(m, Y);
 
     return 0;
 }
