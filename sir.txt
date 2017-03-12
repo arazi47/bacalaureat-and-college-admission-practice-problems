@@ -1,0 +1,157 @@
+#include <iostream>
+
+using namespace std;
+
+bool prim(int n)
+{
+    if (n < 2)
+        return false;
+
+    if (n % 2 == 0 && n != 2)
+        return false;
+
+    for (int d = 3; d * d <= n; d += 2)
+        if (n % d == 0)
+            return false;
+
+    return true;
+}
+
+// X = (1,2,2,3,3,3,4,5,5,5,5,5,6,7,7,7,7,7,7,7,8,9,10,11,...)
+int determina_element(int k)
+{
+    int nr = 0, cnt = 0;
+    while (cnt < k)
+    {
+        ++nr;
+        if (prim(nr))
+            cnt += nr;
+        else
+            cnt += 1;
+    }
+
+    return nr;
+}
+
+int determina_divizorul_urmator(int n, int ultimul_divizor)
+{
+    for (int d = ultimul_divizor + 1; d <= n / 2; ++d)
+        if (n % d == 0)
+            return d;
+
+    return -1;
+}
+
+// 1 2 3 4 2 5 6 2 3 7 8 2 4 ...
+int determina_element_sir2(int k)
+{
+    int nr = 0, cnt = 0;
+    int ultdiv;
+    int rez;
+    while (cnt < k)
+    {
+        ++nr;
+        cout << nr << ' ';
+        rez = nr;
+        ultdiv = 1;
+        ++cnt;
+
+        ultdiv = determina_divizorul_urmator(nr, ultdiv);
+        //cout << "ULTDIV PENTRU " << nr << " " << ultdiv << endl;
+        while (cnt < k && ultdiv != -1)
+        {
+            cout << ultdiv << ' ';
+            ultdiv = determina_divizorul_urmator(nr, ultdiv);
+            ++cnt;
+        }
+        if (ultdiv != -1)
+            rez = ultdiv;
+    }
+
+    return rez;
+}
+
+int determina_urmatorul_factor_prim(int n, int ultimul_factor)
+{
+    ultimul_factor = ultimul_factor + 1;
+
+    while (ultimul_factor < n)
+        if (n % ultimul_factor == 0 && prim(ultimul_factor))
+            return ultimul_factor;
+        else
+            ++ultimul_factor;
+
+    return 0;
+}
+
+//  X = (1,2,3,4,2,5,6,2,3,7,8,2,9,3,10,2,5,11,12,2,3,13,14,2,7,...)
+int determina_element_sir3(int k)
+{
+    int nr = 0, cnt = 0;
+    int ultdiv;
+    int rez;
+    while (cnt < k)
+    {
+        ++nr;
+        //cout << nr << ' ';
+        rez = nr;
+        ultdiv = 1;
+        ++cnt;
+
+        ultdiv = determina_urmatorul_factor_prim(nr, ultdiv);
+        //cout << "ULTDIV PENTRU " << nr << " " << ultdiv << endl;
+        while (cnt < k && ultdiv != 0)
+        {
+            //cout << ultdiv << ' ';
+            ultdiv = determina_urmatorul_factor_prim(nr, ultdiv);
+            ++cnt;
+        }
+        if (ultdiv != 0)
+            rez = ultdiv;
+    }
+
+    return rez;
+}
+
+// Nu prea merge
+// de la k la p (sir3)
+int determina_secventa(int k, int p)
+{
+    int nr = 0, cnt = 0;
+    int ultdiv;
+    while (cnt < p)
+    {
+        ++nr;
+        //cout << nr << ' ';
+        ultdiv = 1;
+        ++cnt;
+
+        if (cnt >= k && cnt <= p)
+            cout << nr << ' ';
+
+
+        ultdiv = determina_urmatorul_factor_prim(nr, ultdiv);
+        //cout << "ULTDIV PENTRU " << nr << " " << ultdiv << endl;
+        while (cnt >= k && cnt <= p && ultdiv != 0)
+        {
+            //cout << ultdiv << ' ';
+            if (cnt >= k && cnt <= p)
+                cout << ultdiv << ' ';
+
+            ultdiv = determina_urmatorul_factor_prim(nr, ultdiv);
+            ++cnt;
+        }
+    }
+}
+
+int main()
+{
+    int k, p;
+    cin >> k >> p;
+    //cout << determina_element(k);
+    //cout << determina_element_sir2(k);
+    //cout << determina_element_sir3(k);
+    cout << determina_secventa(k, p);
+
+    return 0;
+}
