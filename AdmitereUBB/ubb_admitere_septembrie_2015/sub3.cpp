@@ -31,6 +31,7 @@ bool cif_comuna(int a, int b)
     return false;
 }
 
+// insereaza pe pozitia "poz" valoarea "val"
 void insereaza(int &n, int *x, int poz, int val)
 {
     for (int i = n; i >= poz; --i)
