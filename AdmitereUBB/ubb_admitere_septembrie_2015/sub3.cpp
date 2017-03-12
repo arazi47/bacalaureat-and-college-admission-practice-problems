@@ -4,111 +4,101 @@
 
 using namespace std;
 
-int n, v[100]; // marimea, vectorul de elemente
-
-// insereaza val pe pozitia index + 1
-void insereaza(int index, int val)
+void citire(int &n, int *x)
 {
-    for (int i = n; i > index; --i)
-        v[i + 1] = v[i];
-
-    v[index + 1] = val;
-    ++n;
+    cin >> n;
+    for (int i = 0; i < n; ++i)
+        cin >> x[i];
 }
 
-bool cifcomuna(int n, int m)
+// verifica daca a si b au cel putin o cifra comuna
+bool cif_comuna(int a, int b)
 {
-    int vdf1[10] = {}, vdf2[10] = {};
-
-    while (n)
+    bool v[10] = {};
+    while (a)
     {
-        vdf1[n % 10]++;
-        n /= 10;
+        v[a % 10] = true;
+        a /= 10;
     }
 
-    while (m)
+    while (b)
     {
-        vdf2[m % 10]++;
-        m /= 10;
-    }
-
-    for (int i = 0; i < 10; ++i)
-        if (vdf1[i] > 0 && vdf2[i] > 0)
+        if (v[b % 10] == true)
             return true;
+        b /= 10;
+    }
 
     return false;
 }
 
-// daca toate elementele de la index pana la n au o cifra comuna, e perfect
-bool perfect(int index)
+void insereaza(int &n, int *x, int poz, int val)
 {
-    for (int i = index + 1; i <= n; ++i)
-        if (!cifcomuna(v[index], v[i]))
-                return false;
+    for (int i = n; i >= poz; --i)
+        x[i] = x[i - 1];
+
+    x[poz] = val;
+    ++n;
+}
+
+// verifica daca elementul de pe pozitia "poz" este perfect
+bool perfect(int n, int *x, int poz)
+{
+    int i = poz + 1;
+    while (i < n)
+    {
+        if (!cif_comuna(x[poz], x[i]))
+            return false;
+        ++i;
+    }
 
     return true;
 }
 
-int O[100] = {}; // contine indexul fiecarui element din v pentru a aparea in ordine descrescatoare
-int copie[100] = {}; // copie a lui v, pentru index_de_max
-
-// Metoda ineficienta. Puteam folosi counting sort probabil...
-int index_de_max()
+void adauga_divizori(int &n, int *x)
 {
-    int max = 0, index;
-    for (int i = 1; i <= n; ++i)
-        if (copie[i] > max && copie[i] != -1)
-        {
-            max = copie[i];
-            index = i;
-        }
-
-    copie[index] = -1; // maximul asta nu poate fi luat din nou, il setam cu -1 (de aceea ne trebuie si un vector copie)
-
-    return index;
-}
-
-void determinaO()
-{
-    for (int i = 1; i <= n; ++i)
+    for (int i = 0; i < n - 1; ++i)
     {
-        O[i] = 1; // incepem de la 1
-        copie[i] = v[i];
+        if (perfect(n, x, i))
+        {
+            for (int d = x[i] / 2; d >= 2; --d)
+                if (x[i] % d == 0)
+                    insereaza(n, x, i + 1, d);
+        }
     }
-
-    for (int i = 1; i <= n; ++i)
-        O[i] = index_de_max();
 }
 
-void citire()
+void construieste_o(int n, int *x, int *o)
 {
-    cin >> n;
-    for (int i = 1; i <= n; ++i)
-        cin >> v[i];
+    for (int i = 0; i < n; ++i)
+        o[i] = i;
+
+    for (int i = 0; i < n - 1; ++i)
+        for (int j = i + 1; j < n; ++j)
+            if (x[o[i]] < x[o[j]])
+            {
+                int t = o[i];
+                o[i] = o[j];
+                o[j] = t;
+            }
 }
 
-// determina divizorii pentru v[i] si ii insereaza in vectorul v
-void determinaSiInsereazaDivizorii(int index)
+void afiseaza(int n, int *x, int *o)
 {
-    for (int d = 2; d <= v[index] / 2; ++d) // calculam divizorii
-        if (v[index] % d == 0)
-            insereaza(index, d);
-}
-
-void afisare()
-{
-    for (int i = 1; i <= n; ++i)
-        cout << v[O[i]] << ' '; // se afiseaza v in ordinea data de O
+    for (int i = 0; i < n; ++i)
+        cout << x[o[i]] << ' ';
 }
 
 int main()
 {
-    citire();
-    for (int i = 1; i < n; ++i) // < n pentru ca ultimul element nu poate fi perfect
-        if (perfect(i))
-            determinaSiInsereazaDivizorii(i);
-    determinaO();
-    afisare();
+    int n, x[200];
+    citire(n, x);
+
+    adauga_divizori(n, x);
+
+
+    int o[200];
+    construieste_o(n, x, o);
+    afiseaza(n, x, o);
 
     return 0;
 }
