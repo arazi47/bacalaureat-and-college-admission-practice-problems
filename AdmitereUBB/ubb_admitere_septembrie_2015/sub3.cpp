@@ -96,7 +96,6 @@ int main()
 
     adauga_divizori(n, x);
 
-
     int o[200];
     construieste_o(n, x, o);
     afiseaza(n, x, o);

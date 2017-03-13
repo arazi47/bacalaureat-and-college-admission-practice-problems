@@ -4,103 +4,126 @@
 
 using namespace std;
 
-int n, m, A[101][101], X[1001], indexX;
-bool ARE_SECVENTA = false;
-
-void citire()
-{
-    cin >> n >> m;
-
-    for (int j = 1; j <= m; ++j)
-        for (int i = 1; i <= n; ++i)
-            cin >> A[i][j];
-}
-
-void ConstruiesteX()
-{
-    indexX = 0;
-    for (int j = 1; j <= m; ++j)
-        for (int i = 1; i <= n; ++i)
-        {
-            ++indexX;
-            X[indexX] = A[i][j];
-        }
-}
-
 bool prim(int n)
 {
-    for (int d = 2; d * d <= n; ++d)
+    if (n < 2)
+        return false;
+    if (n % 2 == 0 && n != 2)
+        return false;
+    for (int d = 3; d * d <= n; d += 2)
         if (n % d == 0)
             return false;
 
     return true;
 }
 
-bool magic(int x)
+// va retuna 10 la puterea numarului de cifre ale lui n
+int putere(int n)
 {
-    int x2 = x;
-    int mult = 10;
-    int nrc = 0;
-
-    if (!prim(x))
-        return false;
-
-    while (x2)
+    int p = 1;
+    while (n)
     {
-        ++nrc;
-        x2 /= 10;
+        p *= 10;
+        n /= 10;
     }
 
-    for (int i = 0; i < nrc - 1; ++i)
+    return p;
+}
+
+bool magic(int n)
+{
+    int n_initial = n;
+    int p = 1;
+    int putere_max = putere(n);
+    while (p != putere_max)
     {
-        if (!prim(x % mult))
+        p *= 10;
+        if (!prim(n))
             return false;
-
-        mult *= 10;
+        n = n_initial % p;
     }
 
-    if (!prim(x / mult)) // prima cifra
+    putere_max /= 10;
+    // prima cifra
+    if (!prim(n_initial / putere_max))
         return false;
 
     return true;
 }
 
-void AfisareSecventa(int index1, int index2)
+void citire(int &n, int &m, int a[101][101])
 {
-    ARE_SECVENTA = true;
-    for (; index1 <= index2; ++index1)
-        cout << X[index1] << ' ';
+    cin >> n >> m;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= m; ++j)
+            cin >> a[i][j];
 }
 
-void DetSecvMax(int index1)
+void determina_x(int n, int m, int a[101][101], int &l, int *x)
 {
-    bool gasit = true;
-    int indexFinal = index1 + 1;
-    for (int i = index1 + 1; i < indexX && gasit; ++i)
-        if (magic(X[i] + X[i + 1]))
-            ++indexFinal;
+    l = 1;
+    for (int i = 1; i <= m; ++i)
+        for (int j = 1; j <= n; ++j)
+            x[l++] = a[j][i];
+}
+
+void determina_secventa_maxima(int l, int *x, int st, int &fin)
+{
+    for (int i = st; i <= l; ++i)
+        if (magic(x[i] + x[i + 1]))
+            ++fin;
         else
-            gasit = false;
+            break;
 
-    AfisareSecventa(index1, indexFinal);
+    // fin se va duce cu o pozitie mai incolo decat trebuie, trebuie sa scadem 1
+    --fin;
 }
 
-void DeterminaSecventa()
+void determina_secvente(int l, int *x, int &max_st, int &max_fin)
 {
-    for (int i = 1; i < indexX; ++i) // nu <= pentru ca verificam si i + 1
-        if (magic(X[i] + X[i + 1]))
-            DetSecvMax(i);
+    max_st = max_fin = 0; // inceputul si finalul secventei maxime
+    int fin; // finalul secventei curente
 
+    for (int i = 1; i < l; ++i)
+    {
+        if (magic(x[i] + x[i + 1]))
+        {
+            fin = i + 1;
+            determina_secventa_maxima(l, x, i, fin);
+
+            if (fin - i > max_fin - max_st)
+            {
+                max_st = i;
+                max_fin = fin;
+            }
+        }
+    }
+}
+
+void afiseaza_secventa(int *x, int start, int fin)
+{
+    if (start == 0 || fin == 0)
+    {
+        cout << "Nu exista secventa";
+        return;
+    }
+
+    for (int i = start; i <= fin; ++i)
+        cout << x[i] << ' ';
 }
 
 int main()
 {
-    citire();
-    ConstruiesteX();
-    DeterminaSecventa();
+    int n, m, a[101][101];
+    int l, x[101*101]; // l = lungimea sirului x
 
-    if (!ARE_SECVENTA)
-        cout << "Nu exista secventa";
+    citire(n, m, a);
+    determina_x(n, m, a, l, x);
+
+    int start, fin;
+    determina_secvente(l, x, start, fin);
+
+    afiseaza_secventa(x, start, fin);
 
     return 0;
 }
