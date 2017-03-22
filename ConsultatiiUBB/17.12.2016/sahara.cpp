@@ -1,4 +1,5 @@
 // http://www.cs.ubbcluj.ro/wp-content/uploads/Rezolvarea-in-C-a-problemelor-prezentate-la-consultatiile-din-data-de-17.12.2016.pdf
+
 #include <iostream>
 
 using namespace std;
