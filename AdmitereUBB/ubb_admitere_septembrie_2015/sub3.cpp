@@ -61,7 +61,7 @@ void adauga_divizori(int &n, int *x)
     {
         if (perfect(n, x, i))
         {
-            for (int d = x[i] / 2; d >= 2; --d)
+            for (int d = 2; d <= x[i] / 2; ++d)
                 if (x[i] % d == 0)
                     insereaza(n, x, i + 1, d);
         }
@@ -86,7 +86,7 @@ void construieste_o(int n, int *x, int *o)
 void afiseaza(int n, int *x, int *o)
 {
     for (int i = 0; i < n; ++i)
-        cout << x[o[i]] << ' ';
+        cout << x[i] << ' ';
 }
 
 int main()
