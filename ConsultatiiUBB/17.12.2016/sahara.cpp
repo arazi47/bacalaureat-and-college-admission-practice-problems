@@ -14,7 +14,7 @@ int numar_vecini(int n, int m, int a[101][101], int i, int j)
         ++cnt;
     if (j > 1 && a[i][j - 1] == 1)
         ++cnt;
-    if (j < n && a[i][j + 1] == 1)
+    if (j < m && a[i][j + 1] == 1)
         ++cnt;
 
     return cnt;
@@ -52,7 +52,7 @@ void impadurire(int n, int m, int a[101][101], bool &sePoate, int &nrZile)
     do
     {
         am_plantat = false;
-        initializeaza_matrice(m, n, a, b);
+        initializeaza_matrice(n, m, a, b);
 
         for (int i = 1; i <= n; ++i)
             for (int j = 1; j <= m; ++j)
