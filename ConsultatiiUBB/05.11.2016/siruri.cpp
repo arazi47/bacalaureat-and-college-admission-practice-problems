@@ -76,7 +76,6 @@ int main()
 {
     int a, b;
     cin >> a >> b;
-    // Indexarea incepe de la 0 in functia facuta de mine
     determinaElementS2(a, a + b);
 
     return 0;
