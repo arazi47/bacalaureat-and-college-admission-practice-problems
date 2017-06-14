@@ -36,17 +36,17 @@ int urmatorulDivizorPrim(int n, int ultimulDivizorGasit)
 {
     if (prim(n) || ultimulDivizorGasit == -1)
         return -1;
-    //cout << "VER " << n << ' ' << ultimulDivizorGasit << ' ';
+
     for (int d = ultimulDivizorGasit + 1; d <= n / 2; ++d)
         if (n % d == 0 && prim(d))
             return d;
-    //cout << "N_";
 
     return -1;
 }
 
 // Afiseaza elementele sirului X care sunt intre pozitiile intervalului (inchis) [a,b]
 // X = (1,2,3,4,2,5,6,2,3,7,8,2,9,3,10,2,5,11,12,2,3,13,14,2,7,...)
+// Indexarea sirului incepe de la 1
 void determinaElementS2(int a, int b)
 {
     int n = 0, cnt = 0, ultdiv;
@@ -62,11 +62,9 @@ void determinaElementS2(int a, int b)
             ultdiv = urmatorulDivizorPrim(n, ultdiv);
             if (ultdiv != -1)
             {
-                // Merge? Da.
-                // De ce merge? Nu stiu.
-                if (cnt >= a - 1)
-                    cout << ultdiv << ' ';
                 ++cnt;
+                if (cnt >= a)
+                    cout << ultdiv << ' ';
             }
             else
                 break;
@@ -78,6 +76,7 @@ int main()
 {
     int a, b;
     cin >> a >> b;
+    // Indexarea incepe de la 0 in functia facuta de mine
     determinaElementS2(a, a + b);
 
     return 0;
