@@ -32,7 +32,7 @@ void afiseazaCeaMaiLungaPerioadaDeCresteri(int n, float v[MAX], int anInceput)
         if (v[i] < v[i + 1])
         {
             st = fin = i;
-            while (v[fin] < v[fin + 1])
+            while (v[fin] < v[fin + 1] && fin < n)
                 ++fin;
 
             if (fin - st > finMax - stMax)
@@ -61,7 +61,7 @@ void afiseazaToatePerioadeleInCareTempAuCrescut(int n, float v[MAX])
         if (v[i] < v[i + 1])
         {
             st = fin = i;
-            while (v[fin] < v[fin + 1])
+            while (v[fin] < v[fin + 1] && fin < n)
                 ++fin;
 
             if (fin - st > 0)
