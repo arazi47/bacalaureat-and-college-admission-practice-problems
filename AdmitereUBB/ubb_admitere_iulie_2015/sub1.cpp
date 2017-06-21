@@ -4,6 +4,39 @@
 
 using namespace std;
 
+int elemente_sa(int n, int m, int a[100][100])
+{
+    bool minlin, maxlin, mincol, maxcol;
+    int cnt = 0;
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < m; ++j)
+        {
+            minlin = maxlin = mincol = maxcol = true;
+
+            for (int k = 0; k < n; ++k)
+                if (a[i][j] > a[k][j] && i != k)
+                   maxlin = false;
+
+            for (int k = 0; k < n; ++k)
+                if (a[i][j] < a[k][j] && i != k)
+                    minlin = false;
+
+                for (int k = 0; k < m; ++k)
+                    if (a[i][j] < a[i][k] && j != k)
+                        mincol = false;
+
+                for (int k = 0; k < m; ++k)
+                    if (a[i][j] > a[i][k] && j != k)
+                        maxcol = false;
+
+            if ((maxlin && mincol) ||
+                (minlin && maxcol))
+                    ++cnt;
+        }
+
+    return cnt;
+}
+
 int subI_A(int m, int n, int A[101][101])
 {
     int cnt = 0, ml, mc; // max/min linie; max/min coloana

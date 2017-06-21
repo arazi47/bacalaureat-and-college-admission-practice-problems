@@ -5,7 +5,6 @@
 
 using namespace std;
 
-// 1 2 3 4 5
 int f(int n, int v[100])
 {
     int i = 0;
@@ -35,7 +34,6 @@ int f(int n, int v[100])
     return -1;
 }
 
-// Nu stiu cum se face
 int main()
 {
     int n, v[100];
