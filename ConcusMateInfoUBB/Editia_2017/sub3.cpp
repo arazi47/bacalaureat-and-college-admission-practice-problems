@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#define MAX 100 + 1
+
 using namespace std;
 
 int sumaCifre(int n)
@@ -16,7 +18,7 @@ int sumaCifre(int n)
     return s;
 }
 
-int cifraControl(int n)
+int cifraDeControl(int n)
 {
     while (n > 9)
         n = sumaCifre(n);
@@ -24,75 +26,83 @@ int cifraControl(int n)
     return n;
 }
 
-void citire(int &nr, int &m, int &n, int A[101][101])
+void citire(int &nr, int &m, int &n, int A[MAX][MAX])
 {
     cin >> nr;
     cin >> m >> n;
-
     for (int i = 1; i <= m; ++i)
         for (int j = 1; j <= n; ++j)
             cin >> A[i][j];
 }
 
-int revers(int n)
+void determinaVectorulDeCifreDeControl(int m, int n, int A[MAX][MAX], bool c[10])
 {
-    int r = 0;
-    while (n)
-    {
-        r = r * 10 + n % 10;
-        n /= 10;
-    }
-
-    return r;
-}
-
-int DeterminaCelMaiLungPrefix(int nr, int m, int n, int A[101][101])
-{
-    // vectorul de frecventa al cifrelor de control
-    // putem bool, si nu int pentru ca nu trebuie sa stim de cate ori apare cifra respectiva,
-    // pentru ca o putem folosi de cate ori dorim
-    bool cifreCtrl[10] = {};
-
     for (int i = 1; i <= m; ++i)
         for (int j = 1; j <= n; ++j)
-            cifreCtrl[cifraControl(A[i][j])] = true;
+            c[cifraDeControl(A[i][j])] = true;
+}
 
-    int prefix = 0;
-    // TODO:
-    // ar trebui sa bagam cifrele intr-un vector
-    // daca avem 0 la final se pierde
-    nr = revers(nr);
+int determinaCelMaiLungPrefix(int nr, bool c[10])
+{
+    // Punem numarul intr-un vector
+    int v[5], n = 0;
     while (nr)
     {
-        if (cifreCtrl[nr % 10])
-            prefix = prefix * 10 + nr % 10;
-        else
-            break;
-
+        v[n++] = nr % 10;
         nr /= 10;
     }
 
-    if (prefix == 0)
-        prefix = -1;
+    // Inversam vectorul, ca sa obtinem de la 0 la n cifrele numarului initial
+    // De la stanga la dreapta
+    for (int i = 0; i < n / 2; ++i)
+    {
+        int t = v[i];
+        v[i] = v[n - 1 - i];
+        v[n - 1 - i] = t;
+    }
 
-    return prefix;
+    // Cel mai lung prefix
+    int rez = 0;
+    bool areMacarOCifra = false;
+
+    // Construim cel mai lung prefix
+    for (int i = 0; i < n; ++i)
+    {
+        if (c[v[i]])
+        {
+            rez = rez * 10 + v[i];
+
+            if (!areMacarOCifra)
+                areMacarOCifra = true;
+        }
+        else
+            break;
+    }
+
+    return areMacarOCifra ? rez : -1;
 }
 
-void afiseazaPrefix(int pr)
+void afiseazaCelMaiLungPrefix(int p)
 {
-    if (pr == -1)
+    if (p == -1)
         cout << "nu exista prefix";
     else
-        cout << pr;
+        cout << p;
 }
 
-// 12319 3 4 182 12 274 22 22 1 98 56 5 301 51 94
+// Date de intrare:
+// 12319
+// 3 4
+// 182 12 274 22 22 1 98 56 5 301 51 94
 int main()
 {
-   int A[101][101], m, n, nr;
-   citire(nr, m, n, A);
-   int prefix = DeterminaCelMaiLungPrefix(nr, m, n, A);
-   afiseazaPrefix(prefix);
+    int nr, m, n, A[MAX][MAX], prefix;
+    bool c[10] = {};
 
-   return 0;
+    citire(nr, m, n, A);
+    determinaVectorulDeCifreDeControl(m, n, A, c);
+    prefix = determinaCelMaiLungPrefix(nr, c);
+    afiseazaCelMaiLungPrefix(prefix);
+
+    return 0;
 }
