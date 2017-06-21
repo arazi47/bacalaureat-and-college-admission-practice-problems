@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#define MAX 100 + 1
-
 using namespace std;
+
+#define MAX 100 + 1
 
 int sumaCifre(int n)
 {
