@@ -1,0 +1,26 @@
+// De ce avem nevoie de if (n / d != d):
+// De ex, numarul 256 are 9 divizori (7, fara 1 si 256)
+// 1 2 4 8 16 32 64 128 256
+// Algoritmul ii ia cate 2, fara 1 si 256
+// 2 - 128
+// 4 - 64
+// 8 - 32
+// 16
+// Daca nu am avea acel if, ar lua 16 de doua ori: adica ar lua sum += d (16) si sum += (n / d) care e 256 / 16, care e tot 16
+
+int SubIIEficient(int n)
+{
+    int sum = 0;
+    for (int d = 2; d * d <= n; ++d)
+    {
+        if (n % d == 0)
+        {
+            sum += d;
+
+            if (n / d != d)
+                sum += (n / d);
+        }
+    }
+
+    return sum;
+}
