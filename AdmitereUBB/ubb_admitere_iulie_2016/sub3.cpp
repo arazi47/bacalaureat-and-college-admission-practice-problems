@@ -13,20 +13,17 @@ void citeste(int &n, int *a)
 
 bool munte(int n, int *a, int st, int fin)
 {
-    while (a[st] < a[st + 1])
-        ++st;
+    int i = st;
+    while (a[i] < a[i + 1] && i < fin)
+        ++i;
 
-    bool munte = st < fin;
+    if (i == st || i == fin)
+        return false;
 
-    if (munte)
-    {
-        while (st < fin && a[st] > a[st + 1])
-            ++st;
-    }
+    while (a[i] > a[i + 1] && i < fin)
+        ++i;
 
-    munte = munte && (st == fin);
-
-    return munte;
+    return i == fin;
 }
 
 bool distincte(int n, int *a)
@@ -58,36 +55,42 @@ void ceaMaiFrecventa(int n, int *a, int &altitudine, int &cnt)
 
 void ceaMaiLungaInsula(int n, int *a, int &st, int &fin)
 {
-    int stMax = 0, finMax = 0, stCurr = 0, finCurr = 0;
-    for (int i = 0; i < n; ++i)
+    int i = 0;
+    int start, jfin, startMax = 0, finMax = 0;
+    while (i < n - 1)
     {
         while (a[i] == 0)
             ++i;
 
-        stCurr = i;
+        start = jfin = i;
+        while (a[jfin] && jfin < n - 1)
+            ++jfin;
 
-        while (a[i] != 0)
-            ++i;
+        // jfin va fi indexul lui 0, sfarsitul insuleu
+        // de aceea, trebuie sa scadem indexul cu 1
+        --jfin;
 
-        finCurr = i - 1;
-
-        // daca la sfarsitul sirului nu avem 0...
-        if (finCurr >= n)
-            break;
-
-        if (finCurr - stCurr > finMax - stMax)
+        if (jfin - start > finMax - startMax)
         {
-            finMax = finCurr;
-            stMax = stCurr;
+            startMax = start;
+            finMax = jfin;
         }
+
+        i = jfin;
+        ++i;
     }
 
-    st = stMax;
+    st = startMax;
     fin = finMax;
 }
 
-// 15 10 2 1 0 7 0 1 2 13 5 0 0 8 5 2
-// 10 1 2 0 1 2 13 0 0 1 2
+// Exemplul 1:
+// n = 15
+// a[] = 10 2 1 0 7 0 1 2 13 5 0 0 8 5 2
+
+// Exemplul 2:
+// n = 10
+// a [] = 1 2 0 1 2 13 0 0 1 2
 int main()
 {
     int n, a[100];
@@ -105,10 +108,10 @@ int main()
         cout << "Nu este munte" << endl;
 
     if (distincte(n, a))
-        cout << "Altitudinile sunt distincte" << endl;
+        cout << "Altitudinile au valori distincte" << endl;
     else
     {
-        cout << "Altitudinile nu sunt distincte" << endl;
+        cout << "Altitudinile nu au valori distincte" << endl;
         int alt = 0, cnt = 0;
         ceaMaiFrecventa(n, a, alt, cnt);
         cout << "Cea mai frecventa altitudine este " << alt << " si apare de " << cnt << " ori" << endl;
@@ -116,3 +119,4 @@ int main()
 
     return 0;
 }
+
