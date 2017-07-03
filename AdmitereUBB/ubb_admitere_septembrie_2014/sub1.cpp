@@ -32,14 +32,32 @@ int SubI_B_2(int a, int b)
     return a;
 }
 
-// Interschimbarea a doua numere intregi in 3 secvente
-void SubI_C(int a, int b)
+// 3 metode diferite de interschimbare a numerelor a si b
+void SubI_C_1(int a, int b)
 {
     a = a + b;
     b = a - b;
     a = a - b;
 
-    cout << a << ' '<< b;
+    cout << a << ' '<< b << endl;
+}
+
+void SubI_C_2(int a, int b)
+{
+    a = a * b;
+    b = a / b;
+    a = a / b;
+
+    cout << a << ' ' << b << endl;
+}
+
+void SubI_C_3(int a, int b)
+{
+    int t = a;
+    a = b;
+    b = t;
+
+    cout << a << ' ' << b << endl;
 }
 
 int main()
@@ -48,10 +66,13 @@ int main()
     cin >> a >> b;
 
     cout << SubI_B_1(a, b); // Euclid
-    cout << '\n';
+    cout << endl;
     cout << SubI_B_2(a, b); // Scaderi repetate
-    cout << '\n';
-    SubI_C(a, b); // Interschimbare
+    cout << endl;
+    SubI_C_1(a, b); // Interschimbare
+    SubI_C_2(a, b);
+    SubI_C_3(a, b);
 
     return 0;
 }
+
