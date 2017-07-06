@@ -63,7 +63,7 @@ void insereazaInSirulY(int &m, sir Y[MAX], int val)
 {
     for (int i = 0; i < m; ++i)
     {
-        // am mai gasit acest numar deja
+        // daca am gasit deja acest numar
         // doar crestem numarul de aparitii
         if (Y[i].valoare == val)
         {
@@ -99,7 +99,6 @@ int main()
 {
     int n, X[MAX];
 
-
     sir Y[MAX];
     // lungimea sirului Y
     int m;
@@ -107,8 +106,6 @@ int main()
     citire(n, X);
     construiesteSirulY(n, X, m, Y);
     tiparesteSir(m, Y);
-
-
 
     return 0;
 }
