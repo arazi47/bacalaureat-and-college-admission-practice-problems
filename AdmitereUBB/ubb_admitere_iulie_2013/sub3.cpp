@@ -4,100 +4,112 @@
 
 using namespace std;
 
+#define MAX 500
+
 struct sir
 {
-    int val;
-    int aparitii;
+    int valoare;
+    int nrAparitii;
 };
-
-void citire(int &n, int *x)
-{
-    n = 0;
-    int val;
-    cin >> val;
-    while (val != 0)
-    {
-        x[n++] = val;
-        cin >> val;
-    }
-}
 
 bool prim(int n)
 {
     if (n < 2)
         return false;
-
     if (n % 2 == 0 && n != 2)
         return false;
-
     for (int d = 3; d * d <= n; d += 2)
         if (n % d == 0)
             return false;
-
     return true;
 }
 
-// calculeaza suma cifrelor unui numar
-int sc(int n)
+int sumaCifre(int n)
 {
     int s = 0;
     while (n)
     {
-        s += n % 10;
+        s += (n % 10);
         n /= 10;
     }
 
     return s;
 }
 
-void inserare(int &m, sir Y[], int val)
+void citire(int &n, int X[MAX])
+{
+    n = 0;
+    int x;
+    cin >> x;
+    while (x != 0)
+    {
+        X[n++] = x;
+        cin >> x;
+    }
+}
+
+void tiparesteSir(int m, sir Y[MAX])
+{
+    if (m == 0)
+        cout << "Sirul Y este vid";
+    else
+    {
+        for (int i = 0; i < m; ++i)
+            cout << Y[i].valoare << ' ' << Y[i].nrAparitii << endl;
+    }
+}
+
+void insereazaInSirulY(int &m, sir Y[MAX], int val)
 {
     for (int i = 0; i < m; ++i)
-        if (Y[i].val == val)
+    {
+        // am mai gasit acest numar deja
+        // doar crestem numarul de aparitii
+        if (Y[i].valoare == val)
         {
-            ++Y[i].aparitii;
+            ++Y[i].nrAparitii;
             return;
         }
+    }
 
     int j = m - 1;
-    while (j >= 0 && val < Y[j].val)
+    while (j >= 0 && val < Y[j].valoare)
     {
         Y[j + 1] = Y[j];
         --j;
     }
 
-    Y[j + 1].val = val;
-    Y[j + 1].aparitii = 1;
+    Y[j + 1].valoare = val;
+    // suntem la prima aparitie
+    Y[j + 1].nrAparitii = 1;
     ++m;
 }
 
-void tiparire(int n, sir Y[])
+void construiesteSirulY(int n, int X[MAX], int &m, sir Y[MAX])
 {
-    if (n == 0)
+    m = 0;
+    for (int i = 0; i < n; ++i)
     {
-        cout << "Sirul Y este vid";
-        return;
+        if (prim(sumaCifre(X[i])))
+            insereazaInSirulY(m, Y, X[i]);
     }
-
-    for (int i = 0; i < n; ++i)
-        cout << Y[i].val << ' ' << Y[i].aparitii << endl;
-}
-
-void construieste(int n, int *x, int &m, sir Y[])
-{
-    for (int i = 0; i < n; ++i)
-        if (prim(sc(x[i])))
-            inserare(m, Y, x[i]);
 }
 
 int main()
 {
-    int n, m = 0, X[500];
-    sir Y[500];
+    int n, X[MAX];
+
+
+    sir Y[MAX];
+    // lungimea sirului Y
+    int m;
 
     citire(n, X);
-    construieste(n, X, m, Y);
-    tiparire(m, Y);
+    construiesteSirulY(n, X, m, Y);
+    tiparesteSir(m, Y);
+
+
 
     return 0;
 }
+
