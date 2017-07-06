@@ -1,125 +1,123 @@
 // http://www.cs.ubbcluj.ro/wp-content/uploads/subiect-admitere-2012-informatica.pdf
 
-// cred ca la asta mai trebuie lucrat
-
 #include <iostream>
 
 using namespace std;
 
-bool asemenea(int a, int b)
-{
-    int v[10] = {};
-    while (a)
-    {
-        v[a % 10] = 1;
-        a /= 10;
-    }
+// nu se da maximul in enuntul problemei
+#define MAX 100
 
-    while (b)
-    {
-        ++v[b % 10];
-        b /= 10;
-    }
-
-    for (int i = 0; i < 10; ++i)
-        if (v[i] == 1)
-            return false;
-
-    return true;
-}
-
-void citire(int &n, int *v)
+void citire(int &n, int X[MAX])
 {
     cin >> n;
     for (int i = 0; i < n; ++i)
-        cin >> v[i];
+        cin >> X[i];
 }
 
-void tiparire(int n, int *v)
+void tiparesteSir(int k, int R[MAX])
 {
-    for (int i = 0; i < n; ++i)
-        cout << v[i] << ' ';
+    for (int i = 0; i < k; ++i)
+        cout << R[i] << ' ';
+
+    cout << endl;
 }
 
-void determina_secventa_maxima(int n, int *x, int start, int &fin)
+int configureazaCifre(int n)
 {
-    for (int i = start; i < n; ++i)
-        if (asemenea(x[i], x[i + 1]))
-            ++fin;
-        else
-            break;
+    int r = 0;
+    while (n)
+    {
+        r |= 1 << (n % 10);
+        n /= 10;
+    }
 
-    // fin va fi mai mare cu 1 decat indexul final al secventei
-    --fin;
+    return r;
 }
 
-// verificam daca valoarea "val" apartine sirului r
-bool este_in_r(int m, int *r, int val)
+bool asemenea(int a, int b)
 {
-    for (int i = 0; i < m; ++i)
-        if (r[i] == val)
+    a = configureazaCifre(a);
+    b = configureazaCifre(b);
+
+    return a == b;
+}
+
+// verifica daca x se gaseste in sirul R
+bool existaInR(int k, int R[MAX], int x)
+{
+    for (int i = 0; i < k; ++i)
+        if (R[i] == x)
             return true;
 
     return false;
 }
 
-void insereaza_in_r(int *x, int &m, int *r, int start, int fin)
+// insereaza in R elementele sirului X cuprinse intre indexurile start si stop
+void insereazaInR(int X[MAX], int &k, int R[MAX], int start, int stop)
 {
-    while (start <= fin)
+    while (start <= stop)
     {
-        if (!este_in_r(m, r, x[start]))
-            r[m++] = x[start];
+        if (!existaInR(k, R, X[start]))
+            R[k++] = X[start];
+
         ++start;
     }
 }
 
-void elimina_din_x(int &n, int *x, int start, int fin)
+void eliminaDinX(int &n, int X[MAX], int start, int stop)
 {
-    // inlocuim elementele situate intre start si fin cu elementele de dupa
-    for (int i = 1; i < n - fin; ++i)
-        x[start++] = x[fin + i];
+    for (int i = 0; i + stop + 1 < n; ++i)
+        X[start + i] = X[i + stop + 1];
+
+    n -= (stop - start + 1);
 }
 
-void determina_secvente(int &n, int *x, int &m, int *r)
+// determina secventele de numere asemenea din sirul X
+void determinaSecvente(int &n, int X[MAX], int &k, int R[MAX])
 {
-    int fin; // finalul secventei curente
+    k = 0;
+
+    // indexul inceputului si sfarsitului secventei
+    int start, stop;
+
     for (int i = 0; i < n - 1; ++i)
     {
-        if (asemenea(x[i], x[i + 1]))
+        if (asemenea(X[i], X[i + 1]))
         {
-            fin = i + 1;
-            determina_secventa_maxima(n, x, i, fin);
-            if (i != fin)
-            {
-                // intai inseram in r elementele ce apartin secventei
-                insereaza_in_r(x, m, r, i, fin);
+            start = i;
+            stop = i + 1;
 
-                // doar apoi le putem elimina din x
-                elimina_din_x(n, x, i, fin);
+            while (asemenea(X[stop], X[stop + 1]) && stop < n - 1)
+                ++stop;
 
-                // scade marimea sirului x
-                n -= (fin - i);
-            }
+            insereazaInR(X, k, R, start, stop);
+            eliminaDinX(n, X, start, stop);
         }
     }
 }
 
 int main()
 {
-    int n, x[100];
-    int m = 0, r[100];
-    citire(n, x);
+    int n, X[MAX], k, R[MAX];
+    citire(n, X);
+    determinaSecvente(n, X, k, R);
 
-    determina_secvente(n, x, m, r);
-
-    tiparire(n, x);
-
-    cout << endl;
-
-    if (m == 0)
-        cout << "R este sirul vid";
+    if (n > 0)
+    {
+        cout << "X = ";
+        tiparesteSir(n, X);
+    }
     else
-        tiparire(m, r);
+        cout << "X este sirul vid" << endl;
+
+    if (k > 0)
+    {
+        cout << "R = ";
+        tiparesteSir(k, R);
+    }
+    else
+        cout << "R este sirul vid" << endl;
 
     return 0;
 }
+
