@@ -4,77 +4,98 @@
 
 using namespace std;
 
-int oglindit(int n)
-{
-    int o = 0; // oglinditul (inversul) lui n
-    while (n)
-    {
-        o = o * 10 + n % 10;
-        n /= 10;
-    }
-
-    return o;
-}
+// numarul maxim de elemente nu este specificat in enuntul problemei
+#define MAX 100
 
 bool palindrom(int n)
 {
-    return n == oglindit(n);
+    if (n % 10 == 0)
+        return false;
+    int m = 0;
+    while (n)
+    {
+        m = m * 10 + n % 10;
+        if (m == n)
+            return true;
+        n /= 10;
+        if (m == n)
+            return true;
+        if (m > n)
+            return false;
+    }
+
+    return false;
 }
 
-void insereaza_descrescator(int &n, int *v, int val)
+void citire(int &n, int X[MAX])
 {
-    for (int i = 0; i < n; ++i)
-        if (v[i] == val)
-            return;
-
-    int j = n - 1;
-    while (j >= 0 && val > v[j])
+    n = 0;
+    int x;
+    cin >> x;
+    while (x != 0)
     {
-        v[j + 1] = v[j];
+        X[n++] = x;
+        cin >> x;
+    }
+}
+
+void tiparesteSir(int k, int Y[MAX])
+{
+    if (k == 0)
+        cout << "Sirul Y e vid";
+    else
+    {
+        for (int i = 0; i < k; ++i)
+            cout << Y[i] << ' ';
+    }
+}
+
+// verifica daca numarul x se gaseste in sirul Y
+bool exista(int k, int Y[MAX], int x)
+{
+    for (int i = 0; i < k; ++i)
+        if (Y[i] == x)
+            return true;
+    return false;
+}
+
+// insereaza valoarea x in sirul Y de lungime k in mod descrescator
+void insereazaInSirulY(int &k, int Y[MAX], int x)
+{
+    // elementele sirului Y trebuie sa fie distincte
+    if (exista(k, Y, x))
+        return;
+
+    int j = k - 1;
+    while (j >= 0 && x > Y[j])
+    {
+        Y[j + 1] = Y[j];
         --j;
     }
 
-    v[j + 1] = val;
-    ++n;
+    Y[j + 1] = x;
+    ++k;
 }
 
-void citire(int &n, int *v)
+void determinaPalindroame(int n, int X[MAX], int &k, int Y[MAX])
 {
-    n = 0;
-    int t;
-    cin >> t;
-    while (t != 0)
-    {
-        v[n++] = t;
-        cin >> t;
-    }
-}
-
-void tiparire(int n, int *v)
-{
-    if (n == 0)
-    {
-        cout << "Sirul Y e vid";
-        return;
-    }
-
+    k = 0;
     for (int i = 0; i < n; ++i)
-        cout << v[i] << ' ';
-}
-
-void determina_palindroame(int n, int *X, int &m, int *Y)
-{
-    for (int i = 0; i < n; ++i)
+    {
         if (palindrom(X[i]))
-            insereaza_descrescator(m, Y, X[i]);
+            insereazaInSirulY(k, Y, X[i]);
+    }
 }
 
 int main()
 {
-    int n, X[100], m = 0, Y[100];
+    int n, X[MAX];
+    int k, Y[MAX];
+
     citire(n, X);
-    determina_palindroame(n, X, m, Y);
-    tiparire(m, Y);
+    determinaPalindroame(n, X, k, Y);
+    tiparesteSir(k, Y);
 
     return 0;
 }
+
