@@ -1,84 +1,110 @@
-// http://www.cs.ubbcluj.ro/wp-content/uploads/subiect-informatica-concurs-mate-info-ubb-2013.pdf
+// http://www.cs.ubbcluj.ro/wp-content/uploads/subiect-informatica-concurs-mate-info-ubb-ro-2014.pdf
 
 #include <iostream>
 
 using namespace std;
 
-// in enuntul problemei nu este specificat numarul maxim de elemente
-// in schimb, se specifica faptul ca indexarea incepe de la 1
-#define MAX 100 + 1
+#define MAX 50
 
-void citire(int &n, int X[MAX])
+bool prim(int n)
 {
-    cin >> n;
-    for (int i = 1; i <= n; ++i)
-        cin >> X[i];
+    if (n < 2)
+        return false;
+    if (n % 2 == 0 && n != 2)
+        return false;
+    for (int d = 3; d * d <= n; d += 2)
+        if (n % d == 0)
+            return false;
+    return true;
 }
 
-// verifica daca a este prefixul lui b
-bool prefix(int a, int b)
+bool superprim(int n)
 {
-    while (a < b)
-    {
-        if (b / 10 == a)
-            return true;
+    if (!prim(n))
+        return false;
 
-        b /= 10;
+    while (n / 10 != 0)
+    {
+        if (!prim(n / 10))
+            return false;
+        n /= 10;
     }
+
+    return true;
+}
+
+// verifica daca valoarea val se afla in sirul X
+bool exista(int k, int X[MAX * MAX], int val)
+{
+    for (int i = 0; i < k; ++i)
+        if (X[i] == val)
+            return true;
 
     return false;
 }
 
-void determinaSecventaMaxima(int n, int X[MAX], int &start, int &stop)
+// insereaza valoarea val in sirul X in ordine descrescatoare
+void insereazaDescrescator(int &k, int X[MAX * MAX], int val)
 {
-    int startMax = 0, stopMax = 0;
+    // numerele din sir trebuie sa fie distincte
+    if (exista(k, X, val))
+        return;
 
-    for (int i = 1; i < n; ++i)
+    int j = k - 1;
+    while (j >= 0 && val > X[j])
     {
-        if (prefix(X[i], X[i + 1]))
-        {
-            start = i;
-            stop = i + 1;
-            while (prefix(X[stop], X[stop + 1]) && stop < n)
-                ++stop;
-
-            if (stop - start > stopMax - startMax)
-            {
-                startMax = start;
-                stopMax = stop;
-            }
-        }
+        X[j + 1] = X[j];
+        --j;
     }
 
-    start = startMax;
-    stop = stopMax;
+    X[j + 1] = val;
+    ++k;
 }
 
-void tiparesteSecventaMaxima(int X[MAX], int start, int stop)
+void tiparesteSir(int k, int X[MAX * MAX])
 {
-    if (start == 0 && stop == 0)
-    {
-        cout << "Secventa este vida";
-    }
+    if (k == 0)
+        cout << "Sirul este vid";
     else
     {
-        while (start <= stop)
+        for (int i = 0; i < k; ++i)
+            cout << X[i] << ' ';
+    }
+}
+
+void citire(int &n, int A[MAX][MAX])
+{
+    cin >> n;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j)
+            cin >> A[i][j];
+}
+
+void determinaSuperprime(int n, int A[MAX][MAX], int &k, int X[MAX * MAX])
+{
+    k = 0;
+    for (int i = 1; i <= n; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
         {
-            cout << X[start] << ' ';
-            ++start;
+            // triunghiul stang
+            if (i > j && i + j < n + 1 && superprim(A[i][j]))
+                insereazaDescrescator(k, X, A[i][j]);
+            else if (i < j && i + j > n + 1 && superprim(A[i][j]))
+                insereazaDescrescator(k, X, A[i][j]);
         }
     }
 }
 
 int main()
 {
-    int n, X[MAX];
+    int A[MAX][MAX], n;
+    // sirul X de lungime k ce va contine numerele superprime, ordonate descrescator
+    int X[MAX * MAX], k;
 
-    // indexurile primului si ultimului element din secventa maxima de prefixe
-    int start, stop;
-    citire(n, X);
-    determinaSecventaMaxima(n, X, start, stop);
-    tiparesteSecventaMaxima(X, start, stop);
+    citire(n, A);
+    determinaSuperprime(n, A, k, X);
+    tiparesteSir(k, X);
 
     return 0;
 }
