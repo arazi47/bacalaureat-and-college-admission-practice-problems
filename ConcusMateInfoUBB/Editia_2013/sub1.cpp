@@ -23,8 +23,8 @@ void subI_B(int n, int v[])
     } while (schimbare);
 }
 
-// verifica daca numerele a si b sunt prime intre ele
-// adica, cel mai mare divizor comun al lor este 1
+// pentru ca numerele a si b sa fie prime intre ele
+// cmmdc(a, b) trebuie sa fie egal cu 1
 bool subI_C(int a, int b)
 {
     int r;
