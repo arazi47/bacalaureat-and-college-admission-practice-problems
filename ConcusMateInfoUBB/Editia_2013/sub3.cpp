@@ -1,4 +1,5 @@
 // http://www.cs.ubbcluj.ro/wp-content/uploads/subiect-informatica-concurs-mate-info-ubb-2013.pdf
+
 #include <iostream>
 
 using namespace std;
