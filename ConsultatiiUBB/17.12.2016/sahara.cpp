@@ -4,23 +4,10 @@
 
 using namespace std;
 
-int numar_vecini(int n, int m, int a[101][101], int i, int j)
-{
-    int cnt = 0;
+// maximul este 100, insa indexarea incepe de la 1
+#define MAX 100 + 1
 
-    if (i > 1 && a[i - 1][j] == 1)
-        ++cnt;
-    if (i < n && a[i + 1][j] == 1)
-        ++cnt;
-    if (j > 1 && a[i][j - 1] == 1)
-        ++cnt;
-    if (j < m && a[i][j + 1] == 1)
-        ++cnt;
-
-    return cnt;
-}
-
-void citire(int &n, int &m, int a[101][101])
+void citire(int &n, int &m, bool a[MAX][MAX])
 {
     cin >> n >> m;
     for (int i = 1; i <= n; ++i)
@@ -28,63 +15,93 @@ void citire(int &n, int &m, int a[101][101])
             cin >> a[i][j];
 }
 
-bool este_impadurita(int n, int m, int a[101][101])
+int numarVecini(int n, int m, bool a[MAX][MAX], int i, int j)
+{
+    int vecini = 0;
+    if (i > 1 && a[i - 1][j])
+        ++vecini;
+    if (i < n && a[i + 1][j])
+        ++vecini;
+    if (j > 1 && a[i][j - 1])
+        ++vecini;
+    if (j < m && a[i][j + 1])
+        ++vecini;
+
+    return vecini;
+}
+
+bool impadurita(int n, int m, bool a[MAX][MAX])
 {
     for (int i = 1; i <= n; ++i)
         for (int j = 1; j <= m; ++j)
             if (a[i][j] == 0)
                 return false;
-
-    return true;
 }
 
-void initializeaza_matrice(int n, int m, int a[101][101], int b[101][101])
+// initializeaza matricea a cu valorile matricei a
+void initializeazaMatrice(int n, int m, bool a[MAX][MAX], bool b[MAX][MAX])
 {
     for (int i = 1; i <= n; ++i)
         for (int j = 1; j <= m; ++j)
             b[i][j] = a[i][j];
 }
 
-void impadurire(int n, int m, int a[101][101], bool &sePoate, int &nrZile)
+void impadureste(int n, int m, bool a[MAX][MAX], bool &sePoate, int &nrZile)
 {
-    bool am_plantat;
-    int b[101][101];
+    sePoate = false;
+    nrZile = 0;
+
+    // verifica daca s-a plantat cel putin un copac in ziua curenta
+    bool plantat;
+    bool b[MAX][MAX];
+
     do
     {
-        am_plantat = false;
-        initializeaza_matrice(n, m, a, b);
+        plantat = false;
+        initializeazaMatrice(n, m, a, b);
 
         for (int i = 1; i <= n; ++i)
+        {
             for (int j = 1; j <= m; ++j)
-                if (a[i][j] == 0 && numar_vecini(n, m, b, i, j) >= 2)
+            {
+                // daca un copac aflat la coordonatele (i, j) are cel putin 2 vecini
+                // se poate planta alt copac
+                if (a[i][j] == 0 && numarVecini(n, m, b, i, j) >= 2)
                 {
                     a[i][j] = 1;
-                    am_plantat = true;
+                    if (!plantat)
+                        plantat = true;
                 }
+            }
+        }
 
-        if (am_plantat)
+        if (plantat)
             ++nrZile;
-    } while (am_plantat);
+        else
+            break;
+    } while (!impadurita(n, m, a));
 
-    if (este_impadurita(n, m, a))
+    if (impadurita(n, m, a))
         sePoate = true;
+    else
+        sePoate = false;
 }
 
 int main()
 {
-    int n, m, a[101][101];
-    bool sePoate = false;
-    int nrZile = 0;
+    int n, m;
+    bool a[MAX][MAX];
+    bool sePoate;
+    int nrZile;
 
     citire(n, m, a);
-    impadurire(n, m, a, sePoate, nrZile);
+    impadureste(n, m, a, sePoate, nrZile);
 
     if (sePoate)
-        cout << "sePoate = true";
+        cout << "sePoate = true" << endl << "nrZile = " << nrZile;
     else
-        cout << "sePoate = false";
-    cout << endl;
-    cout << "nrZile = " << nrZile;
+        cout << "sePoate = false" << endl << "nrZile = " << nrZile;
 
     return 0;
 }
+
